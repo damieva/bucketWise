@@ -1,7 +1,5 @@
 package domain
 
-import "time"
-
 type CategoryType string
 
 const (
@@ -11,8 +9,7 @@ const (
 )
 
 type Category struct {
-	ID           string       `json:"id"`
-	Name         string       `json:"name"`
-	Type         CategoryType `json:"type"`
-	CreationTime time.Time    `json:"creationTime"`
+	ID   string       `json:"id"`
+	Name string       `json:"name"`
+	Type CategoryType `json:"type"`
 }

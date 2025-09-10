@@ -1,7 +1,5 @@
 package domain
 
-import "time"
-
 type BudgetPeriod string
 
 const (
@@ -15,5 +13,4 @@ type Budget struct {
 	SpentAmount    float64      `json:"spentAmount"`
 	Period         BudgetPeriod `json:"period"`
 	CategoryID     string       `json:"categoryID"`
-	CreationTime   time.Time    `json:"creationTime"`
 }

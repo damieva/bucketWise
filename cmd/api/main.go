@@ -1,1 +1,9 @@
-package api
+package main
+
+import (
+	"log"
+)
+
+func main() {
+	log.Println("starting api")
+}
