@@ -1,12 +1,17 @@
-package category
+package services
 
 import (
 	"bucketWise/pkg/domain"
+	"bucketWise/pkg/ports"
 	"fmt"
 	"log"
 )
 
-func (s Service) Create(category domain.Category) (id interface{}, err error) {
+type CategoryService struct {
+	Repo ports.CategoryRepository
+}
+
+func (s CategoryService) Create(category domain.Category) (id interface{}, err error) {
 
 	insertedId, err := s.Repo.Insert(category)
 	if err != nil {

@@ -2,12 +2,12 @@ package usecases
 
 import (
 	"bucketWise/pkg/domain"
-	"bucketWise/pkg/services/transaction"
+	"bucketWise/pkg/services"
 	"context"
 )
 
 type CreateTransactionUseCase struct {
-	transactionService transaction.Service
+	transactionService services.TransactionService
 }
 
 func (uc CreateTransactionUseCase) Run(ctx context.Context, tx domain.Transaction) (id interface{}, err error) {

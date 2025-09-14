@@ -1,13 +1,18 @@
-package transaction
+package services
 
 import (
 	"bucketWise/pkg/domain"
+	"bucketWise/pkg/ports"
 	"fmt"
 	"log"
 	"time"
 )
 
-func (s Service) Create(transaction domain.Transaction) (id interface{}, err error) {
+type TransactionService struct {
+	Repo ports.TransactionRepository
+}
+
+func (s TransactionService) Create(transaction domain.Transaction) (id interface{}, err error) {
 	// Set creation time
 	transaction.CreationTime = time.Now().UTC()
 
