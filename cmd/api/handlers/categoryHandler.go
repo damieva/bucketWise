@@ -45,6 +45,18 @@ func (h CategoryHandler) ListAllCategories(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"categories": categoryList})
 }
 
+func (h CategoryHandler) GetByNameCategory(c *gin.Context) {
+	name := c.Param("name")
+	category := domain.Category{Name: name}
+
+	result, err := h.CategoryUC.ListOneCategoryUseCase(category)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "oops!"})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"category": result})
+}
+
 func (h CategoryHandler) DeleteCategory(c *gin.Context) {
 	name := c.Param("name")
 	category := domain.Category{Name: name}

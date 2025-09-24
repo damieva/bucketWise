@@ -33,6 +33,17 @@ func (s CategoryService) ListAll() ([]domain.Category, error) {
 	return categoryList, nil
 }
 
+func (s CategoryService) ListOne(cat domain.Category) (domain.Category, error) {
+
+	result, err := s.Repo.SelectOne(cat)
+	if err != nil {
+		log.Println(err.Error())
+		return result, fmt.Errorf("error finding the category named %s %w", cat.Name, err)
+	}
+
+	return result, nil
+}
+
 func (s CategoryService) Delete(cat domain.Category) (int64, error) {
 	deletedCount, err := s.Repo.Delete(cat)
 	if err != nil {
