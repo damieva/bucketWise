@@ -9,11 +9,15 @@ type CategoryUseCase struct {
 	CategoryService ports.CategoryService
 }
 
-func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (id interface{}, err error) {
+func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (interface{}, error) {
 	// Aquí no hay lógica adicional: solo orquestamos
 	return uc.CategoryService.Create(cat)
 }
 
-func (uc CategoryUseCase) ListAllCategoryUseCase() (id interface{}, err error) {
+func (uc CategoryUseCase) ListAllCategoryUseCase() ([]domain.Category, error) {
 	return uc.CategoryService.ListAll()
+}
+
+func (uc CategoryUseCase) DeleteCategoryUseCase(cat domain.Category) (int64, error) {
+	return uc.CategoryService.Delete(cat)
 }

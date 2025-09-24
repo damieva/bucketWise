@@ -12,7 +12,7 @@ type TransactionService struct {
 	Repo ports.TransactionRepository
 }
 
-func (s TransactionService) Create(transaction domain.Transaction) (id interface{}, err error) {
+func (s TransactionService) Create(transaction domain.Transaction) (interface{}, error) {
 	// Set creation time
 	transaction.CreationTime = time.Now().UTC()
 

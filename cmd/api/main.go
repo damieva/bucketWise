@@ -47,7 +47,7 @@ func main() {
 		CategoriesRouteGroup.GET("", categoryHandler.ListAllCategories)
 		//CategoriesRouteGroup.GET("/:id", categoryHandler.GetByIDCategory)
 		//CategoriesRouteGroup.PUT("/:id", categoryHandler.UpdateCategory)
-		//CategoriesRouteGroup.DELETE("/:id", categoryHandler.DeleteCategory)
+		CategoriesRouteGroup.DELETE("/:name", categoryHandler.DeleteCategory)
 	}
 
 	log.Fatalln(ginEngine.Run(":8001"))

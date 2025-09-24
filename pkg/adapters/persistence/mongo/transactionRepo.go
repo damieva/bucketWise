@@ -26,3 +26,13 @@ func (r TransactionRepo) Insert(tx domain.Transaction) (interface{}, error) {
 
 	return insertResult.InsertedID, nil
 }
+
+func (r TransactionRepo) Delete(tx domain.Transaction) (int64, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r TransactionRepo) SelectAll() ([]domain.Transaction, error) {
+	//TODO implement me
+	panic("implement me")
+}

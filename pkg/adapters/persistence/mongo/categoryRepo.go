@@ -47,3 +47,15 @@ func (r CategoryRepo) SelectAll() ([]domain.Category, error) {
 
 	return categories, nil
 }
+
+func (r CategoryRepo) Delete(cat domain.Category) (int64, error) {
+	collection := r.Client.Database("bucketWise").Collection("categories")
+	filter := bson.M{"name": cat.Name}
+	res, err := collection.DeleteOne(context.Background(), filter)
+	if err != nil {
+		log.Println(err.Error())
+		return res.DeletedCount, fmt.Errorf("error deleting category %w", err)
+	}
+
+	return res.DeletedCount, nil
+}

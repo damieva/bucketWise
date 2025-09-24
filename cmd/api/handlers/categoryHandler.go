@@ -42,7 +42,33 @@ func (h CategoryHandler) ListAllCategories(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "oops!"})
 	}
 
-	// =======================
-	// Envía una respuesta HTTP con el código 200 y el category_id
 	c.JSON(http.StatusOK, gin.H{"categories": categoryList})
 }
+
+func (h CategoryHandler) DeleteCategory(c *gin.Context) {
+	name := c.Param("name")
+	category := domain.Category{Name: name}
+
+	deletedCount, err := h.CategoryUC.DeleteCategoryUseCase(category)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "oops!"})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"Amount of categories deleted": deletedCount})
+}
+
+/*
+func (h CategoryHandler) UpdateCategory(c *gin.Context) {
+	var categoryUpdateParms domain.Category
+	if err := c.BindJSON(&categoryUpdateParms); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	insertedId, err := h.CategoryUC.UpdateCategoryUseCase(categoryUpdateParms)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "oops!"})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"category_id": insertedId})
+}
+*/
