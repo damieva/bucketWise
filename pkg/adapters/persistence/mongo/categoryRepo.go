@@ -48,6 +48,20 @@ func (r CategoryRepo) SelectAll() ([]domain.Category, error) {
 	return categories, nil
 }
 
+func (r CategoryRepo) SelectOne(cat domain.Category) (domain.Category, error) {
+	collection := r.Client.Database("bucketWise").Collection("categories")
+
+	filter := bson.M{"name": cat.Name}
+	result := domain.Category{}
+	err := collection.FindOne(context.Background(), filter).Decode(&result)
+	if err != nil {
+		log.Println(err.Error())
+		return result, fmt.Errorf("error finding the category %s %w", cat.Name, err)
+	}
+
+	return result, nil
+}
+
 func (r CategoryRepo) Delete(cat domain.Category) (int64, error) {
 	collection := r.Client.Database("bucketWise").Collection("categories")
 	filter := bson.M{"name": cat.Name}

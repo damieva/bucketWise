@@ -36,3 +36,8 @@ func (r TransactionRepo) SelectAll() ([]domain.Transaction, error) {
 	//TODO implement me
 	panic("implement me")
 }
+
+func (r TransactionRepo) SelectOne(cat domain.Transaction) (domain.Category, error) {
+	//TODO implement me
+	panic("implement me")
+}
