@@ -3,6 +3,7 @@ package mongo
 import (
 	"bucketWise/pkg/domain"
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -21,8 +22,8 @@ func (r CategoryRepo) Insert(cat domain.Category) (interface{}, error) {
 	// El insertResult nos devolverá el ID que Mongo asignará al documento
 	insertResult, err := collection.InsertOne(context.Background(), cat)
 	if err != nil {
-		log.Println(err.Error())
-		return nil, fmt.Errorf("error inserting category %w", err)
+		log.Printf("error inserting category %w", err)
+		return nil, domain.ErrUnexpectedDatabase
 	}
 
 	return insertResult.InsertedID, nil
@@ -34,8 +35,8 @@ func (r CategoryRepo) SelectAll() ([]domain.Category, error) {
 	filter := bson.M{}
 	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Println(err.Error())
-		return nil, fmt.Errorf("error getting all the category documents %w", err)
+		log.Printf("error getting all the category documents %w", err)
+		return nil, domain.ErrUnexpectedDatabase
 	}
 
 	var categories []domain.Category
@@ -55,8 +56,12 @@ func (r CategoryRepo) SelectOne(cat domain.Category) (domain.Category, error) {
 	result := domain.Category{}
 	err := collection.FindOne(context.Background(), filter).Decode(&result)
 	if err != nil {
-		log.Println(err.Error())
-		return result, fmt.Errorf("error finding the category %s %w", cat.Name, err)
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return result, domain.ErrCategoryNotFound
+		}
+
+		log.Printf("error querying category %s: %+v", cat.Name, err)
+		return result, domain.ErrUnexpectedDatabase
 	}
 
 	return result, nil
@@ -67,8 +72,8 @@ func (r CategoryRepo) Delete(cat domain.Category) (int64, error) {
 	filter := bson.M{"name": cat.Name}
 	res, err := collection.DeleteOne(context.Background(), filter)
 	if err != nil {
-		log.Println(err.Error())
-		return res.DeletedCount, fmt.Errorf("error deleting category %w", err)
+		log.Printf("error deleting category %s: %+v\n", cat.Name, err)
+		return res.DeletedCount, domain.ErrUnexpectedDatabase
 	}
 
 	return res.DeletedCount, nil
