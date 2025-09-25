@@ -45,7 +45,7 @@ func main() {
 	{
 		CategoriesRouteGroup.POST("", categoryHandler.CreateCategory)
 		CategoriesRouteGroup.GET("", categoryHandler.ListAllCategories)
-		CategoriesRouteGroup.GET("/:name", categoryHandler.GetByNameCategory)
+		CategoriesRouteGroup.GET("/:name", categoryHandler.GetCategoryByName)
 		//CategoriesRouteGroup.PUT("/:id", categoryHandler.UpdateCategory)
 		CategoriesRouteGroup.DELETE("/:name", categoryHandler.DeleteCategory)
 	}
