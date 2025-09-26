@@ -46,3 +46,13 @@ func (s CategoryService) Delete(cat domain.Category) (int64, error) {
 
 	return deletedCount, nil
 }
+
+func (s CategoryService) Update(catName string, cat domain.Category) (int64, error) {
+	modifiedCount, err := s.Repo.Update(catName, cat)
+	if err != nil {
+		log.Println(err.Error())
+		return modifiedCount, fmt.Errorf("error modifying category %w", err)
+	}
+
+	return modifiedCount, nil
+}
