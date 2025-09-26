@@ -7,6 +7,7 @@ type CategoryRepository interface {
 	SelectAll() ([]domain.Category, error)
 	Delete(category domain.Category) (int64, error)
 	SelectOne(cat domain.Category) (domain.Category, error)
+	Update(catName string, cat domain.Category) (int64, error)
 }
 
 type TransactionRepository interface {

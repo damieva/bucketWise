@@ -37,7 +37,8 @@ func (h CategoryHandler) CreateCategory(c *gin.Context) {
 func (h CategoryHandler) ListAllCategories(c *gin.Context) {
 	categoryList, err := h.CategoryUC.ListAllCategoryUseCase()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "oops!"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"categories": categoryList})
@@ -45,11 +46,12 @@ func (h CategoryHandler) ListAllCategories(c *gin.Context) {
 
 func (h CategoryHandler) GetCategoryByName(c *gin.Context) {
 	name := c.Param("name")
-	category := domain.Category{Name: name}
+	catName := domain.Category{Name: name}
 
-	result, err := h.CategoryUC.ListOneCategoryUseCase(category)
+	result, err := h.CategoryUC.ListOneCategoryUseCase(catName)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "oops!"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"category": result})
@@ -57,28 +59,30 @@ func (h CategoryHandler) GetCategoryByName(c *gin.Context) {
 
 func (h CategoryHandler) DeleteCategory(c *gin.Context) {
 	name := c.Param("name")
-	category := domain.Category{Name: name}
+	catName := domain.Category{Name: name}
 
-	deletedCount, err := h.CategoryUC.DeleteCategoryUseCase(category)
+	deletedCount, err := h.CategoryUC.DeleteCategoryUseCase(catName)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "oops!"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"Amount of categories deleted": deletedCount})
 }
 
-/*
 func (h CategoryHandler) UpdateCategory(c *gin.Context) {
+	catName := c.Param("name")
 	var categoryUpdateParms domain.Category
 	if err := c.BindJSON(&categoryUpdateParms); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	insertedId, err := h.CategoryUC.UpdateCategoryUseCase(categoryUpdateParms)
+	modifiedCount, err := h.CategoryUC.UpdateCategoryUseCase(catName, categoryUpdateParms)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "oops!"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"category_id": insertedId})
+	c.JSON(http.StatusOK, gin.H{"Amount of categories modified": modifiedCount})
 }
-*/

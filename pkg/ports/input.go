@@ -9,6 +9,7 @@ type CategoryService interface {
 	ListAll() ([]domain.Category, error)
 	Delete(cat domain.Category) (int64, error)
 	ListOne(cat domain.Category) (domain.Category, error)
+	Update(catName string, cat domain.Category) (int64, error)
 }
 
 type TransactionService interface {
@@ -20,7 +21,7 @@ type CategoryUseCase interface {
 	ListAllCategoryUseCase() ([]domain.Category, error)
 	ListOneCategoryUseCase(cat domain.Category) (domain.Category, error)
 	DeleteCategoryUseCase(cat domain.Category) (int64, error)
-	//UpdateCategoryUseCase(cat domain.Category) (id interface{}, err error)
+	UpdateCategoryUseCase(catName string, cat domain.Category) (int64, error)
 }
 
 type TransactionUseCase interface {

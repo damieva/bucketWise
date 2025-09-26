@@ -78,3 +78,15 @@ func (r CategoryRepo) Delete(cat domain.Category) (int64, error) {
 
 	return res.DeletedCount, nil
 }
+
+func (r CategoryRepo) Update(catName string, cat domain.Category) (int64, error) {
+	collection := r.Client.Database("bucketWise").Collection("categories")
+	filter := bson.M{"name": catName}
+	result, err := collection.ReplaceOne(context.Background(), filter, cat)
+	if err != nil {
+		log.Printf("error updating category %s: %+v\n", cat.Name, err)
+		return 0, domain.ErrUnexpectedDatabase
+	}
+
+	return result.ModifiedCount, nil
+}
