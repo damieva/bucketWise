@@ -14,6 +14,17 @@ type CategoryHandler struct {
 	CategoryUC ports.CategoryUseCase
 }
 
+// CreateCategory godoc
+// @Summary Create a new category
+// @Description Creates a new category in the system
+// @Tags categories
+// @Accept  json
+// @Produce  json
+// @Param   category  body  domain.Category  true  "Category data"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /categories [post]
 func (h CategoryHandler) CreateCategory(c *gin.Context) {
 	var categoryCreateParms dto.CategoryCreateRequest
 	if err := c.BindJSON(&categoryCreateParms); err != nil {
