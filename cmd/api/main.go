@@ -8,8 +8,11 @@ import (
 	"log"
 	"os"
 
+	_ "bucketWise/docs"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -49,6 +52,8 @@ func main() {
 		CategoriesRouteGroup.PUT("/:name", categoryHandler.UpdateCategory)
 		CategoriesRouteGroup.DELETE("/:name", categoryHandler.DeleteCategory)
 	}
+
+	ginEngine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	log.Fatalln(ginEngine.Run(":8001"))
 }
