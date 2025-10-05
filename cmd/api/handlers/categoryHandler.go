@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bucketWise/pkg/domain"
+	"bucketWise/pkg/dto"
 	"bucketWise/pkg/ports"
 	"errors"
 	"net/http"
@@ -14,13 +15,14 @@ type CategoryHandler struct {
 }
 
 func (h CategoryHandler) CreateCategory(c *gin.Context) {
-	var categoryCreateParms domain.Category
+	var categoryCreateParms dto.CategoryCreateRequest
 	if err := c.BindJSON(&categoryCreateParms); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	insertedId, err := h.CategoryUC.CreateCategoryUseCase(categoryCreateParms)
+	cat := domain.Category{Name: categoryCreateParms.Name}
+	insertedId, err := h.CategoryUC.CreateCategoryUseCase(cat)
 	if err != nil {
 		switch {
 		case errors.Is(err, domain.ErrCategoryAlreadyExists):
