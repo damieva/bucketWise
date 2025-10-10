@@ -1,0 +1,195 @@
+basePath: /
+definitions:
+  dto.CategoryCreateRequest:
+    description: Category data required to create a new category
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  dto.CategoryResponse:
+    description: Category data returned by the API
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+host: localhost:8001
+info:
+  contact:
+    name: Denis Amieva
+    url: https://github.com/damieva/bucketWise
+  description: |-
+    ## Overview
+    The BucketWise API provides endpoints to manage financial categories and transactions.
+    It allows users to create, list, update, and delete categories, helping organize spending into personalized budgets.
+
+    ## Features
+    - Create, read, update, and delete categories
+    - Categorize and manage transactions
+    - RESTful interface using JSON
+
+    ## Contact
+    **Author:** Denis Amieva
+    **Repository:** [github.com/damieva/bucketWise](https://github.com/damieva/bucketWise)
+  license:
+    name: MIT
+  termsOfService: http://swagger.io/terms/
+  title: BucketWise API
+  version: "1.0"
+paths:
+  /categories:
+    get:
+      description: Retrieves all categories stored in the system.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of categories
+          schema:
+            additionalProperties:
+              items:
+                $ref: '#/definitions/dto.CategoryResponse'
+              type: array
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List all categories
+      tags:
+      - categories
+    post:
+      consumes:
+      - application/json
+      description: Creates a new category in the system
+      parameters:
+      - description: Category data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CategoryCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CategoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new category
+      tags:
+      - categories
+  /categories/{name}:
+    delete:
+      description: Deletes a specific category by its name
+      parameters:
+      - description: Category name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Number of deleted categories
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a category
+      tags:
+      - categories
+    get:
+      description: Retrieves the details of a specific category by its name
+      parameters:
+      - description: Category name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Category details
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get category by name
+      tags:
+      - categories
+    put:
+      consumes:
+      - application/json
+      description: Updates the name or details of a specific category
+      parameters:
+      - description: Current category name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Updated category details
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CategoryCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Number of modified categories
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a category
+      tags:
+      - categories
+swagger: "2.0"
