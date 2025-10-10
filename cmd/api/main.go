@@ -1,3 +1,13 @@
+// @title BucketWise API
+// @version 1.0
+// @description API documentation for the BucketWise project
+// @termsOfService http://swagger.io/terms/
+// @contact.name Denis Amieva
+// @contact.url https://github.com/damieva/bucketWise
+// @license.name MIT
+// @host localhost:8001
+// @BasePath /
+
 package main
 
 import (
@@ -8,7 +18,8 @@ import (
 	"log"
 	"os"
 
-	_ "bucketWise/docs"
+	_ "bucketWise/cmd/api/docs"
+
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"

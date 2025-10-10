@@ -1,11 +1,13 @@
 package dto
 
-// CategoryCreateRequest representa los datos necesarios para crear una categoría
+// CategoryCreateRequest represents a category for creation
+// @Description Category data required to create a new category
 type CategoryCreateRequest struct {
 	Name string `json:"name" binding:"required"`
 }
 
-// CategoryResponse representa la categoría devuelta al cliente
+// CategoryResponse represents a category returned in responses
+// @Description Category data returned by the API
 type CategoryResponse struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`

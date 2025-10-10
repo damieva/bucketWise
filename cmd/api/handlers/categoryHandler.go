@@ -18,21 +18,22 @@ type CategoryHandler struct {
 // @Summary Create a new category
 // @Description Creates a new category in the system
 // @Tags categories
-// @Accept  json
-// @Produce  json
-// @Param   category  body  domain.Category  true  "Category data"
-// @Success 200 {object} map[string]interface{}
+// @Accept json
+// @Produce json
+// @Param category body dto.CategoryCreateRequest true "Category data"
+// @Success 200 {object} dto.CategoryResponse
 // @Failure 400 {object} map[string]string
+// @Failure 409 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /categories [post]
 func (h CategoryHandler) CreateCategory(c *gin.Context) {
-	var categoryCreateParms dto.CategoryCreateRequest
-	if err := c.BindJSON(&categoryCreateParms); err != nil {
+	var req dto.CategoryCreateRequest
+	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	cat := domain.Category{Name: categoryCreateParms.Name}
+	cat := domain.Category{Name: req.Name}
 	insertedId, err := h.CategoryUC.CreateCategoryUseCase(cat)
 	if err != nil {
 		switch {
@@ -44,7 +45,11 @@ func (h CategoryHandler) CreateCategory(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"category_id": insertedId})
+	resp := dto.CategoryResponse{
+		ID:   insertedId.(string),
+		Name: req.Name,
+	}
+	c.JSON(http.StatusOK, resp)
 }
 
 func (h CategoryHandler) ListAllCategories(c *gin.Context) {

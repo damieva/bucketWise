@@ -1,14 +1,32 @@
+basePath: /
 definitions:
-  domain.Category:
-    description: Category entity used for classification
+  dto.CategoryCreateRequest:
+    description: Category data required to create a new category
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  dto.CategoryResponse:
+    description: Category data returned by the API
     properties:
       id:
         type: string
       name:
         type: string
     type: object
+host: localhost:8001
 info:
-  contact: {}
+  contact:
+    name: Denis Amieva
+    url: https://github.com/damieva/bucketWise
+  description: API documentation for the BucketWise project
+  license:
+    name: MIT
+  termsOfService: http://swagger.io/terms/
+  title: BucketWise API
+  version: "1.0"
 paths:
   /categories:
     post:
@@ -21,17 +39,22 @@ paths:
         name: category
         required: true
         schema:
-          $ref: '#/definitions/domain.Category'
+          $ref: '#/definitions/dto.CategoryCreateRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/dto.CategoryResponse'
         "400":
           description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
           schema:
             additionalProperties:
               type: string
