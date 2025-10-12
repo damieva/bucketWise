@@ -29,6 +29,7 @@ func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (interface{
 func (uc CategoryUseCase) ListAllCategoryUseCase() ([]domain.Category, error) {
 	return uc.CategoryService.ListAll()
 }
+
 func (uc CategoryUseCase) ListOneCategoryUseCase(cat domain.Category) (domain.Category, error) {
 	return uc.CategoryService.ListOne(cat)
 }
