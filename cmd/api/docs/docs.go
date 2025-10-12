@@ -139,8 +139,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Category details",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/dto.CategoryResponse"
                         }
                     },
                     "500": {
@@ -186,7 +185,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Number of modified categories",
+                        "description": "Update result",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -232,7 +231,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Number of deleted categories",
+                        "description": "Deletion result",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true

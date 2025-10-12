@@ -67,7 +67,15 @@ func (h CategoryHandler) ListAllCategories(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"categories": categoryList})
+	var response []dto.CategoryResponse
+	for _, cat := range categoryList {
+		response = append(response, dto.CategoryResponse{
+			ID:   cat.ID,
+			Name: cat.Name,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"categories": response})
 }
 
 // GetCategoryByName godoc
@@ -76,7 +84,7 @@ func (h CategoryHandler) ListAllCategories(c *gin.Context) {
 // @Tags categories
 // @Param name path string true "Category name"
 // @Produce  json
-// @Success 200 {object} map[string]interface{} "Category details"
+// @Success 200 {object} dto.CategoryResponse "Category details"
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /categories/{name} [get]
 func (h CategoryHandler) GetCategoryByName(c *gin.Context) {
@@ -89,7 +97,12 @@ func (h CategoryHandler) GetCategoryByName(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"category": result})
+	response := dto.CategoryResponse{
+		ID:   result.ID,
+		Name: result.Name,
+	}
+
+	c.JSON(http.StatusOK, gin.H{"category": response})
 }
 
 // DeleteCategory godoc
@@ -98,7 +111,7 @@ func (h CategoryHandler) GetCategoryByName(c *gin.Context) {
 // @Tags categories
 // @Param name path string true "Category name"
 // @Produce  json
-// @Success 200 {object} map[string]interface{} "Number of deleted categories"
+// @Success 200 {object} map[string]interface{} "Deletion result"
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /categories/{name} [delete]
 func (h CategoryHandler) DeleteCategory(c *gin.Context) {
@@ -111,7 +124,10 @@ func (h CategoryHandler) DeleteCategory(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"Amount of categories deleted": deletedCount})
+	c.JSON(http.StatusOK, gin.H{
+		"data":    map[string]int64{"deletedCount": deletedCount},
+		"message": "Category deleted successfully",
+	})
 }
 
 // UpdateCategory godoc
@@ -122,23 +138,27 @@ func (h CategoryHandler) DeleteCategory(c *gin.Context) {
 // @Produce  json
 // @Param name path string true "Current category name"
 // @Param category body dto.CategoryCreateRequest true "Updated category details"
-// @Success 200 {object} map[string]interface{} "Number of modified categories"
+// @Success 200 {object} map[string]interface{} "Update result"
 // @Failure 400 {object} map[string]string "Bad request"
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /categories/{name} [put]
 func (h CategoryHandler) UpdateCategory(c *gin.Context) {
 	catName := c.Param("name")
-	var categoryUpdateParms domain.Category
-	if err := c.BindJSON(&categoryUpdateParms); err != nil {
+	var req dto.CategoryCreateRequest
+	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	modifiedCount, err := h.CategoryUC.UpdateCategoryUseCase(catName, categoryUpdateParms)
+	cat := domain.Category{Name: req.Name}
+	modifiedCount, err := h.CategoryUC.UpdateCategoryUseCase(catName, cat)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"Amount of categories modified": modifiedCount})
+	c.JSON(http.StatusOK, gin.H{
+		"data":    map[string]int64{"modifiedCount": modifiedCount},
+		"message": "Category updated successfully",
+	})
 }

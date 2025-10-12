@@ -115,7 +115,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Number of deleted categories
+          description: Deletion result
           schema:
             additionalProperties: true
             type: object
@@ -142,8 +142,7 @@ paths:
         "200":
           description: Category details
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/dto.CategoryResponse'
         "500":
           description: Internal server error
           schema:
@@ -173,7 +172,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Number of modified categories
+          description: Update result
           schema:
             additionalProperties: true
             type: object
