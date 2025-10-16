@@ -20,7 +20,7 @@ type CategoryHandler struct {
 // @Tags categories
 // @Accept json
 // @Produce json
-// @Param category body dto.CategoryCreateRequest true "Category data"
+// @Param category body dto.CategoryCreateRequest true "Category data with name and type (income|expense)"
 // @Success 200 {object} dto.CategoryResponse
 // @Failure 400 {object} map[string]string
 // @Failure 409 {object} map[string]string
@@ -132,12 +132,12 @@ func (h CategoryHandler) DeleteCategory(c *gin.Context) {
 
 // UpdateCategory godoc
 // @Summary Update a category
-// @Description Updates the name or details of a specific category
+// @Description Updates the name or type of specific category
 // @Tags categories
 // @Accept  json
 // @Produce  json
 // @Param name path string true "Current category name"
-// @Param category body dto.CategoryCreateRequest true "Updated category details"
+// @Param category body dto.CategoryCreateRequest true "Updated category details with name and type"
 // @Success 200 {object} map[string]interface{} "Update result"
 // @Failure 400 {object} map[string]string "Bad request"
 // @Failure 500 {object} map[string]string "Internal server error"
