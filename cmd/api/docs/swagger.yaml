@@ -5,8 +5,12 @@ definitions:
     properties:
       name:
         type: string
+      type:
+        description: income | expense
+        type: string
     required:
     - name
+    - type
     type: object
   dto.CategoryResponse:
     description: Category data returned by the API
@@ -14,6 +18,8 @@ definitions:
       id:
         type: string
       name:
+        type: string
+      type:
         type: string
     type: object
 host: localhost:8001
@@ -68,7 +74,7 @@ paths:
       - application/json
       description: Creates a new category in the system
       parameters:
-      - description: Category data
+      - description: Category data with name and type (income|expense)
         in: body
         name: category
         required: true
@@ -155,14 +161,14 @@ paths:
     put:
       consumes:
       - application/json
-      description: Updates the name or details of a specific category
+      description: Updates the name or type of specific category
       parameters:
       - description: Current category name
         in: path
         name: name
         required: true
         type: string
-      - description: Updated category details
+      - description: Updated category details with name and type
         in: body
         name: category
         required: true

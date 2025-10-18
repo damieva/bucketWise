@@ -14,6 +14,8 @@ type CategoryService interface {
 
 type TransactionService interface {
 	Create(tx domain.Transaction) (interface{}, error)
+	ListAll() ([]domain.Transaction, error)
+	ListOne(cat domain.Transaction) (domain.Transaction, error)
 }
 
 type CategoryUseCase interface {
@@ -26,4 +28,6 @@ type CategoryUseCase interface {
 
 type TransactionUseCase interface {
 	CreateTransactionUseCase(tx domain.Transaction) (interface{}, error)
+	ListAllTransactionUseCase() ([]domain.Transaction, error)
+	ListOneTransactionUseCase(cat domain.Transaction) (domain.Transaction, error)
 }

@@ -5,7 +5,6 @@ import (
 	"bucketWise/pkg/ports"
 	"fmt"
 	"log"
-	"time"
 )
 
 type TransactionService struct {
@@ -13,9 +12,6 @@ type TransactionService struct {
 }
 
 func (s TransactionService) Create(transaction domain.Transaction) (interface{}, error) {
-	// Set creation time
-	transaction.CreationTime = time.Now().UTC()
-
 	insertedId, err := s.Repo.Insert(transaction)
 	if err != nil {
 		log.Println(err.Error())
