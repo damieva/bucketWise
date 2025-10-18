@@ -70,7 +70,7 @@ const docTemplate = `{
                 "summary": "Create a new category",
                 "parameters": [
                     {
-                        "description": "Category data",
+                        "description": "Category data with name and type (income|expense)",
                         "name": "category",
                         "in": "body",
                         "required": true,
@@ -154,7 +154,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Updates the name or details of a specific category",
+                "description": "Updates the name or type of specific category",
                 "consumes": [
                     "application/json"
                 ],
@@ -174,7 +174,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Updated category details",
+                        "description": "Updated category details with name and type",
                         "name": "category",
                         "in": "body",
                         "required": true,
@@ -255,10 +255,15 @@ const docTemplate = `{
             "description": "Category data required to create a new category",
             "type": "object",
             "required": [
-                "name"
+                "name",
+                "type"
             ],
             "properties": {
                 "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "description": "income | expense",
                     "type": "string"
                 }
             }
@@ -271,6 +276,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }
