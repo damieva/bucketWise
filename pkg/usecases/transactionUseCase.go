@@ -2,14 +2,18 @@ package usecases
 
 import (
 	"bucketWise/pkg/domain"
-	"bucketWise/pkg/services"
+	"bucketWise/pkg/ports"
 )
 
 type TransactionUseCase struct {
-	transactionService services.TransactionService
+	transactionService ports.TransactionService
 }
 
-func (uc TransactionUseCase) CreateTransactionUseCase(tx domain.Transaction) (id interface{}, err error) {
-	// Aquí no hay lógica adicional: solo orquestamos
+func (uc TransactionUseCase) CreateTransactionUseCase(tx domain.Transaction) (domain.Transaction, error) {
+	// Fase inicial: asignación estática de categoría
+	tx.CategoryID = "1"
+	tx.CategoryName = "Fixed costs"
+	tx.Type = domain.ExpenseCategory
+
 	return uc.transactionService.Create(tx)
 }
