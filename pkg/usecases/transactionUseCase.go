@@ -6,7 +6,7 @@ import (
 )
 
 type TransactionUseCase struct {
-	transactionService ports.TransactionService
+	TransactionService ports.TransactionService
 }
 
 func (uc TransactionUseCase) CreateTransactionUseCase(tx domain.Transaction) (domain.Transaction, error) {
@@ -15,5 +15,5 @@ func (uc TransactionUseCase) CreateTransactionUseCase(tx domain.Transaction) (do
 	tx.CategoryName = "Fixed costs"
 	tx.Type = domain.ExpenseCategory
 
-	return uc.transactionService.Create(tx)
+	return uc.TransactionService.Create(tx)
 }

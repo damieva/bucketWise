@@ -75,6 +75,27 @@ func main() {
 		CategoriesRouteGroup.DELETE("/:name", categoryHandler.DeleteCategory)
 	}
 
+	transactionRepo := mongo.TransactionRepo{
+		Client: client,
+	}
+
+	transactionsSrv := services.TransactionService{
+		Repo: transactionRepo,
+	}
+
+	transactionsUC := usecases.TransactionUseCase{
+		TransactionService: transactionsSrv,
+	}
+
+	transactionsHandler := handlers.TransactionHandler{
+		TransactionUC: transactionsUC,
+	}
+
+	TransactionsRouteGroup := ginEngine.Group("/transactions")
+	{
+		TransactionsRouteGroup.POST("", transactionsHandler.CreateTransaction)
+	}
+
 	ginEngine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	log.Fatalln(ginEngine.Run(":8001"))
