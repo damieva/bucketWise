@@ -13,7 +13,7 @@ type CategoryService interface {
 }
 
 type TransactionService interface {
-	Create(tx domain.Transaction) (domain.Transaction, error)
+	Create(tx domain.Transaction) (interface{}, error)
 }
 
 type CategoryUseCase interface {
