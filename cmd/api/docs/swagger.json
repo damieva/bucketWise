@@ -242,6 +242,67 @@
                     }
                 }
             }
+        },
+        "/transactions": {
+            "post": {
+                "description": "Creates a new Transaction in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Create a new Transaction",
+                "parameters": [
+                    {
+                        "description": "Transaction data with amount, description and date",
+                        "name": "Transaction",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TransactionCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TransactionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -254,11 +315,12 @@
             ],
             "properties": {
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "fixed costs"
                 },
                 "type": {
-                    "description": "income | expense",
-                    "type": "string"
+                    "type": "string",
+                    "example": "expense"
                 }
             }
         },
@@ -273,6 +335,57 @@
                     "type": "string"
                 },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TransactionCreateRequest": {
+            "description": "Transaction data required to create a new transaction",
+            "type": "object",
+            "required": [
+                "amount",
+                "date",
+                "description"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "number",
+                    "example": 49.99
+                },
+                "date": {
+                    "type": "string",
+                    "example": "2025-10-26T19:11:58+01:00"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Netflix subscription"
+                }
+            }
+        },
+        "dto.TransactionResponse": {
+            "description": "Transaction data returned by the API",
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "categoryID": {
+                    "type": "string"
+                },
+                "categoryName": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "type": {
+                    "description": "income | expense",
                     "type": "string"
                 }
             }

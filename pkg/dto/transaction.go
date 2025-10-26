@@ -5,9 +5,9 @@ import "time"
 // TransactionCreateRequest represents a transaction for creation
 // @Description Transaction data required to create a new transaction
 type TransactionCreateRequest struct {
-	Amount      float64   `json:"amount" binding:"required"`
-	Description string    `json:"description" binding:"required"`
-	Date        time.Time `json:"date" binding:"required"`
+	Amount      float64   `json:"amount" example:"49.99" binding:"required"`
+	Date        time.Time `json:"date" example:"2025-10-26T19:11:58+01:00" binding:"required"`
+	Description string    `json:"description" example:"Netflix subscription" binding:"required"`
 }
 
 // TransactionResponse represents a transaction returned in responses

@@ -4,9 +4,10 @@ definitions:
     description: Category data required to create a new category
     properties:
       name:
+        example: fixed costs
         type: string
       type:
-        description: income | expense
+        example: expense
         type: string
     required:
     - name
@@ -20,6 +21,42 @@ definitions:
       name:
         type: string
       type:
+        type: string
+    type: object
+  dto.TransactionCreateRequest:
+    description: Transaction data required to create a new transaction
+    properties:
+      amount:
+        example: 49.99
+        type: number
+      date:
+        example: "2025-10-26T19:11:58+01:00"
+        type: string
+      description:
+        example: Netflix subscription
+        type: string
+    required:
+    - amount
+    - date
+    - description
+    type: object
+  dto.TransactionResponse:
+    description: Transaction data returned by the API
+    properties:
+      amount:
+        type: number
+      categoryID:
+        type: string
+      categoryName:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      type:
+        description: income | expense
         type: string
     type: object
 host: localhost:8001
@@ -197,4 +234,44 @@ paths:
       summary: Update a category
       tags:
       - categories
+  /transactions:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new Transaction in the system
+      parameters:
+      - description: Transaction data with amount, description and date
+        in: body
+        name: Transaction
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TransactionCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TransactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new Transaction
+      tags:
+      - transactions
 swagger: "2.0"
