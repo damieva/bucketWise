@@ -33,7 +33,11 @@ func (h CategoryHandler) CreateCategory(c *gin.Context) {
 		return
 	}
 
-	cat := domain.Category{Name: req.Name}
+	cat := domain.Category{
+		Name: req.Name,
+		Type: domain.CategoryType(req.Type),
+	}
+
 	insertedId, err := h.CategoryUC.CreateCategoryUseCase(cat)
 	if err != nil {
 		switch {
@@ -48,8 +52,9 @@ func (h CategoryHandler) CreateCategory(c *gin.Context) {
 	resp := dto.CategoryResponse{
 		ID:   insertedId.(string),
 		Name: req.Name,
+		Type: req.Type,
 	}
-	c.JSON(http.StatusOK, resp)
+	c.JSON(http.StatusCreated, resp)
 }
 
 // ListAllCategories godoc
