@@ -17,7 +17,7 @@ func (uc TransactionUseCase) CreateTransactionUseCase(tx domain.Transaction) (do
 	newTx := tx
 
 	// Añadir/forzar los campos de categoría
-	newTx.CategoryID = "1"
+	newTx.CategoryID = "68fe71b6e080f7fd26ff6c87"
 	newTx.CategoryName = "Fixed costs"
 	newTx.Type = domain.ExpenseCategory
 
