@@ -17,7 +17,7 @@ type TransactionService interface {
 }
 
 type CategoryUseCase interface {
-	CreateCategoryUseCase(cat domain.Category) (interface{}, error)
+	CreateCategoryUseCase(cat domain.Category) (domain.Category, error)
 	ListAllCategoryUseCase() ([]domain.Category, error)
 	ListOneCategoryUseCase(cat domain.Category) (domain.Category, error)
 	DeleteCategoryUseCase(cat domain.Category) (int64, error)

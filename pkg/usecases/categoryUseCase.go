@@ -4,26 +4,48 @@ import (
 	"bucketWise/pkg/domain"
 	"bucketWise/pkg/ports"
 	"errors"
+	"fmt"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type CategoryUseCase struct {
 	CategoryService ports.CategoryService
 }
 
-func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (interface{}, error) {
-	// First, check if the category already exists
+func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (domain.Category, error) {
+	// Comprobar si la categoría ya existe
 	_, err := uc.CategoryService.ListOne(cat)
 	if err == nil {
-		// If no error, the category is already in the database
-		return nil, domain.ErrCategoryAlreadyExists
+		// Si no hay error, la categoría ya existe
+		return domain.Category{}, domain.ErrCategoryAlreadyExists
 	}
 
-	// If the category was not found, proceed with creation
+	// Si no se encuentra la categoría, crearla
 	if errors.Is(err, domain.ErrCategoryNotFound) {
-		return uc.CategoryService.Create(cat)
+		createdID, err := uc.CategoryService.Create(cat)
+		if err != nil {
+			return domain.Category{}, err
+		}
+
+		// Crear una nueva categoría basada en la recibida
+		newCat := cat
+
+		// Convertir el ID de MongoDB a string
+		objectID, ok := createdID.(primitive.ObjectID)
+		if !ok {
+			return domain.Category{}, fmt.Errorf("expected primitive.ObjectID but got %T", createdID)
+		}
+
+		// Asignar el ID a la entidad de dominio
+		newCat.ID = objectID.Hex()
+
+		// Devolver la categoría con su nuevo ID
+		return newCat, nil
 	}
 
-	return nil, err
+	// Si el error no es ErrCategoryNotFound, devolverlo tal cual
+	return domain.Category{}, err
 }
 
 func (uc CategoryUseCase) ListAllCategoryUseCase() ([]domain.Category, error) {

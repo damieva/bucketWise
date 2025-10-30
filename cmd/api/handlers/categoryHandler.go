@@ -38,7 +38,7 @@ func (h CategoryHandler) CreateCategory(c *gin.Context) {
 		Type: domain.CategoryType(req.Type),
 	}
 
-	insertedId, err := h.CategoryUC.CreateCategoryUseCase(cat)
+	insertedCat, err := h.CategoryUC.CreateCategoryUseCase(cat)
 	if err != nil {
 		switch {
 		case errors.Is(err, domain.ErrCategoryAlreadyExists):
@@ -50,9 +50,9 @@ func (h CategoryHandler) CreateCategory(c *gin.Context) {
 	}
 
 	resp := dto.CategoryResponse{
-		ID:   insertedId.(string),
-		Name: req.Name,
-		Type: req.Type,
+		ID:   insertedCat.ID,
+		Name: insertedCat.Name,
+		Type: string(insertedCat.Type),
 	}
 	c.JSON(http.StatusCreated, resp)
 }
