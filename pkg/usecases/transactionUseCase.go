@@ -39,3 +39,7 @@ func (uc TransactionUseCase) CreateTransactionUseCase(tx domain.Transaction) (do
 	// Devolver la transacción con su nuevo ID
 	return newTx, nil
 }
+
+func (uc TransactionUseCase) ListTransactionsUseCase(cat string) ([]domain.Transaction, error) {
+	return uc.TransactionService.List(cat)
+}

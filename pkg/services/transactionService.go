@@ -21,3 +21,13 @@ func (s TransactionService) Create(tx domain.Transaction) (interface{}, error) {
 
 	return insertedId, nil
 }
+
+func (s TransactionService) List(cat string) ([]domain.Transaction, error) {
+	transactionList, err := s.Repo.Select(cat)
+	if err != nil {
+		log.Println(err.Error())
+		return nil, fmt.Errorf("error listing the requested transactions %w", err)
+	}
+
+	return transactionList, nil
+}

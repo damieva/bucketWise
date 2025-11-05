@@ -235,6 +235,31 @@ paths:
       tags:
       - categories
   /transactions:
+    get:
+      description: Retrieves all transactions, or those matching a category if provided
+      parameters:
+      - description: Category name (optional)
+        in: query
+        name: category
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of transactions
+          schema:
+            items:
+              $ref: '#/definitions/dto.TransactionResponse'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get transactions (optionally filtered by category)
+      tags:
+      - transactions
     post:
       consumes:
       - application/json
