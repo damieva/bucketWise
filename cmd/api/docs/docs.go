@@ -250,6 +250,44 @@ const docTemplate = `{
             }
         },
         "/transactions": {
+            "get": {
+                "description": "Retrieves all transactions, or those matching a category if provided",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Get transactions (optionally filtered by category)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category name (optional)",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of transactions",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TransactionResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Creates a new Transaction in the system",
                 "consumes": [
