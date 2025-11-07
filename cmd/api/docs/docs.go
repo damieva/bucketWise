@@ -24,24 +24,29 @@ const docTemplate = `{
     "paths": {
         "/categories": {
             "get": {
-                "description": "Retrieves all categories stored in the system.",
+                "description": "Retrieves all categories, or only one if the ` + "`" + `name` + "`" + ` query parameter is provided.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "categories"
                 ],
-                "summary": "List all categories",
+                "summary": "List categories (optionally filtered by name)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category name (optional)",
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "List of categories",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/definitions/dto.CategoryResponse"
-                                }
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.CategoryResponse"
                             }
                         }
                     },
@@ -117,42 +122,6 @@ const docTemplate = `{
             }
         },
         "/categories/{name}": {
-            "get": {
-                "description": "Retrieves the details of a specific category by its name",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "categories"
-                ],
-                "summary": "Get category by name",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Category name",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Category details",
-                        "schema": {
-                            "$ref": "#/definitions/dto.CategoryResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            },
             "put": {
                 "description": "Updates the name or type of specific category",
                 "consumes": [

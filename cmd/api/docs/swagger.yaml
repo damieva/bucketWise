@@ -85,25 +85,29 @@ info:
 paths:
   /categories:
     get:
-      description: Retrieves all categories stored in the system.
+      description: Retrieves all categories, or only one if the `name` query parameter
+        is provided.
+      parameters:
+      - description: Category name (optional)
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: List of categories
           schema:
-            additionalProperties:
-              items:
-                $ref: '#/definitions/dto.CategoryResponse'
-              type: array
-            type: object
+            items:
+              $ref: '#/definitions/dto.CategoryResponse'
+            type: array
         "500":
           description: Internal server error
           schema:
             additionalProperties:
               type: string
             type: object
-      summary: List all categories
+      summary: List categories (optionally filtered by name)
       tags:
       - categories
     post:
@@ -169,30 +173,6 @@ paths:
               type: string
             type: object
       summary: Delete a category
-      tags:
-      - categories
-    get:
-      description: Retrieves the details of a specific category by its name
-      parameters:
-      - description: Category name
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Category details
-          schema:
-            $ref: '#/definitions/dto.CategoryResponse'
-        "500":
-          description: Internal server error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Get category by name
       tags:
       - categories
     put:

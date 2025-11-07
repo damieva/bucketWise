@@ -57,16 +57,19 @@ func (h CategoryHandler) CreateCategory(c *gin.Context) {
 	c.JSON(http.StatusCreated, resp)
 }
 
-// ListAllCategories godoc
-// @Summary      List all categories
-// @Description  Retrieves all categories stored in the system.
-// @Tags         categories
-// @Produce      json
-// @Success      200  {object}  map[string][]dto.CategoryResponse  "List of categories"
-// @Failure      500  {object}  map[string]string  "Internal server error"
-// @Router       /categories [get]
-func (h CategoryHandler) ListAllCategories(c *gin.Context) {
-	categoryList, err := h.CategoryUC.ListAllCategoryUseCase()
+// ListCategories godoc
+// @Summary List categories (optionally filtered by name)
+// @Description Retrieves all categories, or only one if the `name` query parameter is provided.
+// @Tags categories
+// @Param name query string false "Category name (optional)"
+// @Produce json
+// @Success 200 {array} dto.CategoryResponse "List of categories"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /categories [get]
+func (h CategoryHandler) ListCategories(c *gin.Context) {
+	name := c.Query("name")
+
+	categoryList, err := h.CategoryUC.ListCategoriesUseCase(name)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -77,37 +80,11 @@ func (h CategoryHandler) ListAllCategories(c *gin.Context) {
 		response = append(response, dto.CategoryResponse{
 			ID:   cat.ID,
 			Name: cat.Name,
+			Type: string(cat.Type),
 		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{"categories": response})
-}
-
-// GetCategoryByName godoc
-// @Summary Get category by name
-// @Description Retrieves the details of a specific category by its name
-// @Tags categories
-// @Param name path string true "Category name"
-// @Produce  json
-// @Success 200 {object} dto.CategoryResponse "Category details"
-// @Failure 500 {object} map[string]string "Internal server error"
-// @Router /categories/{name} [get]
-func (h CategoryHandler) GetCategoryByName(c *gin.Context) {
-	name := c.Param("name")
-	catName := domain.Category{Name: name}
-
-	result, err := h.CategoryUC.ListOneCategoryUseCase(catName)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	response := dto.CategoryResponse{
-		ID:   result.ID,
-		Name: result.Name,
-	}
-
-	c.JSON(http.StatusOK, gin.H{"category": response})
 }
 
 // DeleteCategory godoc
