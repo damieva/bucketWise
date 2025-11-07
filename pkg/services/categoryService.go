@@ -22,19 +22,15 @@ func (s CategoryService) Create(cat domain.Category) (interface{}, error) {
 	return insertedId, nil
 }
 
-func (s CategoryService) ListAll() ([]domain.Category, error) {
+func (s CategoryService) List(name string) ([]domain.Category, error) {
 
-	categoryList, err := s.Repo.SelectAll()
+	categoryList, err := s.Repo.Select(name)
 	if err != nil {
 		log.Println(err.Error())
 		return nil, fmt.Errorf("error listing all the categories %w", err)
 	}
 
 	return categoryList, nil
-}
-
-func (s CategoryService) ListOne(cat domain.Category) (domain.Category, error) {
-	return s.Repo.SelectOne(cat)
 }
 
 func (s CategoryService) Delete(cat domain.Category) (int64, error) {

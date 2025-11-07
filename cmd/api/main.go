@@ -69,8 +69,7 @@ func main() {
 	CategoriesRouteGroup := ginEngine.Group("/categories")
 	{
 		CategoriesRouteGroup.POST("", categoryHandler.CreateCategory)
-		CategoriesRouteGroup.GET("", categoryHandler.ListAllCategories)
-		CategoriesRouteGroup.GET("/:name", categoryHandler.GetCategoryByName)
+		CategoriesRouteGroup.GET("", categoryHandler.ListCategories)
 		CategoriesRouteGroup.PUT("/:name", categoryHandler.UpdateCategory)
 		CategoriesRouteGroup.DELETE("/:name", categoryHandler.DeleteCategory)
 	}

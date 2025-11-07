@@ -15,7 +15,7 @@ type CategoryUseCase struct {
 
 func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (domain.Category, error) {
 	// Comprobar si la categoría ya existe
-	_, err := uc.CategoryService.ListOne(cat)
+	_, err := uc.CategoryService.List(cat.Name)
 	if err == nil {
 		// Si no hay error, la categoría ya existe
 		return domain.Category{}, domain.ErrCategoryAlreadyExists
@@ -48,12 +48,8 @@ func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (domain.Cat
 	return domain.Category{}, err
 }
 
-func (uc CategoryUseCase) ListAllCategoryUseCase() ([]domain.Category, error) {
-	return uc.CategoryService.ListAll()
-}
-
-func (uc CategoryUseCase) ListOneCategoryUseCase(cat domain.Category) (domain.Category, error) {
-	return uc.CategoryService.ListOne(cat)
+func (uc CategoryUseCase) ListCategoriesUseCase(name string) ([]domain.Category, error) {
+	return uc.CategoryService.List(name)
 }
 
 func (uc CategoryUseCase) DeleteCategoryUseCase(cat domain.Category) (int64, error) {
@@ -62,7 +58,7 @@ func (uc CategoryUseCase) DeleteCategoryUseCase(cat domain.Category) (int64, err
 
 func (uc CategoryUseCase) UpdateCategoryUseCase(catName string, cat domain.Category) (int64, error) {
 	// Verify that the category to update actually exists in the database
-	_, err := uc.CategoryService.ListOne(domain.Category{Name: catName})
+	_, err := uc.CategoryService.List(catName)
 	if errors.Is(err, domain.ErrCategoryNotFound) {
 		return 0, domain.ErrCategoryNotFound
 	} else if err != nil {
@@ -70,7 +66,7 @@ func (uc CategoryUseCase) UpdateCategoryUseCase(catName string, cat domain.Categ
 	}
 
 	// Ensure the new category data does not conflict with an existing record
-	_, err = uc.CategoryService.ListOne(cat)
+	_, err = uc.CategoryService.List(cat.Name)
 	if err == nil {
 		return 0, domain.ErrCategoryAlreadyExists
 	} else if errors.Is(err, domain.ErrCategoryNotFound) {

@@ -3,7 +3,6 @@ package mongo
 import (
 	"bucketWise/pkg/domain"
 	"context"
-	"errors"
 	"fmt"
 	"log"
 
@@ -29,42 +28,35 @@ func (r CategoryRepo) Insert(cat domain.Category) (interface{}, error) {
 	return insertResult.InsertedID, nil
 }
 
-func (r CategoryRepo) SelectAll() ([]domain.Category, error) {
+func (r CategoryRepo) Select(name string) ([]domain.Category, error) {
 	collection := r.Client.Database("bucketWise").Collection("categories")
 
-	filter := bson.M{}
+	var filter bson.M
+	if name == "" {
+		filter = bson.M{}
+	} else {
+		filter = bson.M{"name": name}
+	}
+
 	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Printf("error getting all the category documents %w", err)
+		log.Printf("error getting category documents %v", err)
 		return nil, domain.ErrUnexpectedDatabase
 	}
 
 	var categories []domain.Category
 	err = cursor.All(context.Background(), &categories)
 	if err != nil {
-		log.Println(err.Error())
-		return nil, fmt.Errorf("error converting mongo documents from the cursor to a category array %w", err)
+		log.Printf("error decoding mongo cursor: %v", err)
+		return nil, fmt.Errorf("error converting mongo documents to a category array: %w", err)
+	}
+
+	// Si se buscaba una sola categoría y no existe, devolvemos un error semántico
+	if name != "" && len(categories) == 0 {
+		return nil, domain.ErrCategoryNotFound
 	}
 
 	return categories, nil
-}
-
-func (r CategoryRepo) SelectOne(cat domain.Category) (domain.Category, error) {
-	collection := r.Client.Database("bucketWise").Collection("categories")
-
-	filter := bson.M{"name": cat.Name}
-	result := domain.Category{}
-	err := collection.FindOne(context.Background(), filter).Decode(&result)
-	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return result, domain.ErrCategoryNotFound
-		}
-
-		log.Printf("error querying category %s: %+v", cat.Name, err)
-		return result, domain.ErrUnexpectedDatabase
-	}
-
-	return result, nil
 }
 
 func (r CategoryRepo) Delete(cat domain.Category) (int64, error) {
