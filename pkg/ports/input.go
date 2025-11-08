@@ -14,6 +14,7 @@ type CategoryService interface {
 type TransactionService interface {
 	Create(tx domain.Transaction) (interface{}, error)
 	List(cat string) ([]domain.Transaction, error)
+	Delete(IDs []string) (int64, error)
 }
 
 type CategoryUseCase interface {
@@ -26,4 +27,5 @@ type CategoryUseCase interface {
 type TransactionUseCase interface {
 	CreateTransactionUseCase(tx domain.Transaction) (domain.Transaction, error)
 	ListTransactionsUseCase(cat string) ([]domain.Transaction, error)
+	DeleteTransactionsUseCase(IDs []string) (int64, error)
 }

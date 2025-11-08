@@ -31,3 +31,13 @@ func (s TransactionService) List(cat string) ([]domain.Transaction, error) {
 
 	return transactionList, nil
 }
+
+func (s TransactionService) Delete(IDs []string) (int64, error) {
+	deletedCount, err := s.Repo.Delete(IDs)
+	if err != nil {
+		log.Println(err.Error())
+		return deletedCount, fmt.Errorf("error deleting transaction %w", err)
+	}
+
+	return deletedCount, nil
+}

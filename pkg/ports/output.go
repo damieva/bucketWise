@@ -12,4 +12,5 @@ type CategoryRepository interface {
 type TransactionRepository interface {
 	Insert(tx domain.Transaction) (interface{}, error)
 	Select(cat string) ([]domain.Transaction, error)
+	Delete(IDs []string) (int64, error)
 }

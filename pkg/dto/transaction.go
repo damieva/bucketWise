@@ -21,3 +21,8 @@ type TransactionResponse struct {
 	CategoryName string    `json:"categoryName"`
 	Type         string    `json:"type"` // income | expense
 }
+
+// TransactionsDeleteRequest represents the request body used to delete multiple transactions.
+type TransactionsDeleteRequest struct {
+	IDs []string `json:"ids"`
+}

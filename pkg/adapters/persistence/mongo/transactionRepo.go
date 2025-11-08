@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -55,4 +56,26 @@ func (r TransactionRepo) Insert(tx domain.Transaction) (interface{}, error) {
 	}
 
 	return insertResult.InsertedID, nil
+}
+
+func (r TransactionRepo) Delete(IDs []string) (int64, error) {
+	collection := r.Client.Database("bucketWise").Collection("transactions")
+
+	objectIDs := make([]primitive.ObjectID, 0, len(IDs))
+	for _, id := range IDs {
+		objID, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			return 0, fmt.Errorf("invalid transaction ID: %s", id)
+		}
+		objectIDs = append(objectIDs, objID)
+	}
+
+	filter := bson.M{"_id": bson.M{"$in": objectIDs}}
+	deleteResult, err := collection.DeleteMany(context.Background(), filter)
+	if err != nil {
+		log.Printf("error deleting transactions: %v", err)
+		return 0, fmt.Errorf("error deleting transactions: %w", err)
+	}
+
+	return deleteResult.DeletedCount, nil
 }

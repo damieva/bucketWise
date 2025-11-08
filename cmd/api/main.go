@@ -94,6 +94,7 @@ func main() {
 	{
 		TransactionsRouteGroup.POST("", transactionsHandler.CreateTransaction)
 		TransactionsRouteGroup.GET("", transactionsHandler.ListTransactions)
+		TransactionsRouteGroup.DELETE("", transactionsHandler.DeleteTransactions)
 	}
 
 	ginEngine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

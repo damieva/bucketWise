@@ -59,6 +59,13 @@ definitions:
         description: income | expense
         type: string
     type: object
+  dto.TransactionsDeleteRequest:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
 host: localhost:8001
 info:
   contact:
@@ -215,6 +222,40 @@ paths:
       tags:
       - categories
   /transactions:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes one or more transactions by their IDs
+      parameters:
+      - description: Array of transaction IDs to delete
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TransactionsDeleteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Deletion result
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete multiple transactions
+      tags:
+      - transactions
     get:
       description: Retrieves all transactions, or those matching a category if provided
       parameters:

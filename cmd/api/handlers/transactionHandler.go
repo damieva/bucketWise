@@ -89,3 +89,39 @@ func (h TransactionHandler) ListTransactions(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"transactions": response})
 }
+
+// DeleteTransactions godoc
+// @Summary Delete multiple transactions
+// @Description Deletes one or more transactions by their IDs
+// @Tags transactions
+// @Accept  json
+// @Produce  json
+// @Param body body dto.TransactionsDeleteRequest true "Array of transaction IDs to delete"
+// @Success 200 {object} map[string]interface{} "Deletion result"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /transactions [delete]
+func (h TransactionHandler) DeleteTransactions(c *gin.Context) {
+	var req dto.TransactionsDeleteRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	if len(req.IDs) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "no IDs provided"})
+		return
+	}
+
+	deletedCount, err := h.TransactionUC.DeleteTransactionsUseCase(req.IDs)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data":    map[string]int64{"deletedCount": deletedCount},
+		"message": "Transactions deleted successfully",
+	})
+}
