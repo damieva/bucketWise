@@ -43,3 +43,7 @@ func (uc TransactionUseCase) CreateTransactionUseCase(tx domain.Transaction) (do
 func (uc TransactionUseCase) ListTransactionsUseCase(cat string) ([]domain.Transaction, error) {
 	return uc.TransactionService.List(cat)
 }
+
+func (uc TransactionUseCase) DeleteTransactionsUseCase(IDs []string) (int64, error) {
+	return uc.TransactionService.Delete(IDs)
+}
