@@ -10,7 +10,8 @@ import (
 )
 
 type CategoryUseCase struct {
-	CategoryService ports.CategoryService
+	CategoryService    ports.CategoryService
+	TransactionService ports.TransactionService
 }
 
 func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (domain.Category, error) {
@@ -52,8 +53,24 @@ func (uc CategoryUseCase) ListCategoriesUseCase(name string) ([]domain.Category,
 	return uc.CategoryService.List(name)
 }
 
-func (uc CategoryUseCase) DeleteCategoryUseCase(cat domain.Category) (int64, error) {
-	return uc.CategoryService.Delete(cat)
+func (uc CategoryUseCase) DeleteCategoryUseCase(IDs []string) (int64, error) {
+	// Primero, verificar si alguna de las categorías tiene transacciones asociadas
+	hasTx, err := uc.TransactionService.ExistsByCategoryIDs(IDs)
+	if err != nil {
+		return 0, fmt.Errorf("error checking transactions for categories: %w", err)
+	}
+
+	if hasTx {
+		return 0, domain.ErrCategoryHasTransactions
+	}
+
+	// Si no hay transacciones, proceder a eliminar las categorías
+	deletedCount, err := uc.CategoryService.Delete(IDs)
+	if err != nil {
+		return 0, err
+	}
+
+	return deletedCount, nil
 }
 
 func (uc CategoryUseCase) UpdateCategoryUseCase(catName string, cat domain.Category) (int64, error) {

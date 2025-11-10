@@ -9,7 +9,6 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "Denis Amieva",
             "url": "https://github.com/damieva/bucketWise"
@@ -119,6 +118,57 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "Deletes one or more categories by their IDs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "categories"
+                ],
+                "summary": "Delete multiple categories",
+                "parameters": [
+                    {
+                        "description": "Array of category IDs to delete",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CategoriesDeleteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deletion result",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
             }
         },
         "/categories/{name}": {
@@ -167,43 +217,6 @@ const docTemplate = `{
                             "additionalProperties": {
                                 "type": "string"
                             }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Deletes a specific category by its name",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "categories"
-                ],
-                "summary": "Delete a category",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Category name",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Deletion result",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
                         }
                     },
                     "500": {
@@ -370,6 +383,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.CategoriesDeleteRequest": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "dto.CategoryCreateRequest": {
             "description": "Category data required to create a new category",
             "type": "object",
@@ -433,10 +457,10 @@ const docTemplate = `{
                 "amount": {
                     "type": "number"
                 },
-                "categoryID": {
+                "category_id": {
                     "type": "string"
                 },
-                "categoryName": {
+                "category_name": {
                     "type": "string"
                 },
                 "date": {
@@ -475,7 +499,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "BucketWise API",
-	Description:      "## Overview\nThe BucketWise API provides endpoints to manage financial categories and transactions.\nIt allows users to create, list, update, and delete categories, helping organize spending into personalized budgets.\n\n## Features\n- Create, read, update, and delete categories\n- Categorize and manage transactions\n- RESTful interface using JSON\n\n## Contact\n**Author:** Denis Amieva\n**Repository:** [github.com/damieva/bucketWise](https://github.com/damieva/bucketWise)",
+	Description:      "The BucketWise API provides endpoints to manage financial categories and transactions.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

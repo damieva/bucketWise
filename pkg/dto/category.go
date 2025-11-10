@@ -14,3 +14,8 @@ type CategoryResponse struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
 }
+
+// CategoriesDeleteRequest represents the request body used to delete multiple categories.
+type CategoriesDeleteRequest struct {
+	IDs []string `json:"ids"`
+}

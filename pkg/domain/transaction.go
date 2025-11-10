@@ -9,7 +9,7 @@ type Transaction struct {
 	Amount       float64      `bson:"amount"`
 	Date         time.Time    `bson:"date"`
 	Description  string       `bson:"description"`
-	CategoryID   string       `bson:"categoryID"`
-	CategoryName string       `bson:"categoryName"`
+	CategoryID   string       `bson:"category_id"`
+	CategoryName string       `bson:"category_name"`
 	Type         CategoryType `bson:"type"`
 }

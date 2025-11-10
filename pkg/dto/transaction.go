@@ -17,8 +17,8 @@ type TransactionResponse struct {
 	Amount       float64   `json:"amount"`
 	Description  string    `json:"description"`
 	Date         time.Time `json:"date"`
-	CategoryID   string    `json:"categoryID"`
-	CategoryName string    `json:"categoryName"`
+	CategoryID   string    `json:"category_id"`
+	CategoryName string    `json:"category_name"`
 	Type         string    `json:"type"` // income | expense
 }
 
