@@ -41,3 +41,7 @@ func (s TransactionService) Delete(IDs []string) (int64, error) {
 
 	return deletedCount, nil
 }
+
+func (s TransactionService) ExistsByCategoryIDs(categoryIDs []string) (bool, error) {
+	return s.Repo.ExistsByCategoryIDs(categoryIDs)
+}

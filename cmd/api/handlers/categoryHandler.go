@@ -87,28 +87,43 @@ func (h CategoryHandler) ListCategories(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"categories": response})
 }
 
-// DeleteCategory godoc
-// @Summary Delete a category
-// @Description Deletes a specific category by its name
+// DeleteCategories godoc
+// @Summary Delete multiple categories
+// @Description Deletes one or more categories by their IDs
 // @Tags categories
-// @Param name path string true "Category name"
+// @Accept  json
 // @Produce  json
+// @Param body body dto.CategoriesDeleteRequest true "Array of category IDs to delete"
 // @Success 200 {object} map[string]interface{} "Deletion result"
+// @Failure 400 {object} map[string]string "Invalid request"
 // @Failure 500 {object} map[string]string "Internal server error"
-// @Router /categories/{name} [delete]
-func (h CategoryHandler) DeleteCategory(c *gin.Context) {
-	name := c.Param("name")
-	catName := domain.Category{Name: name}
+// @Router /categories [delete]
+func (h CategoryHandler) DeleteCategories(c *gin.Context) {
+	var req dto.CategoriesDeleteRequest
 
-	deletedCount, err := h.CategoryUC.DeleteCategoryUseCase(catName)
+	// Validar cuerpo JSON
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	// Validar que haya al menos un ID
+	if len(req.IDs) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "no IDs provided"})
+		return
+	}
+
+	// Ejecutar caso de uso
+	deletedCount, err := h.CategoryUC.DeleteCategoryUseCase(req.IDs)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Respuesta exitosa
 	c.JSON(http.StatusOK, gin.H{
 		"data":    map[string]int64{"deletedCount": deletedCount},
-		"message": "Category deleted successfully",
+		"message": "Categories deleted successfully",
 	})
 }
 

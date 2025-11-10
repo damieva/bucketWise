@@ -12,5 +12,5 @@ type Budget struct {
 	AssignedAmount float64      `json:"assignedAmount"`
 	SpentAmount    float64      `json:"spentAmount"`
 	Period         BudgetPeriod `json:"period"`
-	CategoryID     string       `json:"categoryID"`
+	CategoryID     string       `json:"category_id"`
 }

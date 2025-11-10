@@ -18,12 +18,12 @@ type TransactionRepo struct {
 func (r TransactionRepo) Select(cat string) ([]domain.Transaction, error) {
 	collection := r.Client.Database("bucketWise").Collection("transactions")
 
-	// Filtra por categoryName y si categoryName es vacío devuelve todas las tx
+	// Filtra por category_name y si category_name es vacío devuelve todas las tx
 	var filter bson.M
 	if cat == "" {
 		filter = bson.M{}
 	} else {
-		filter = bson.M{"categoryName": cat}
+		filter = bson.M{"category_name": cat}
 	}
 	log.Println(cat)
 	log.Println(filter)
@@ -78,4 +78,17 @@ func (r TransactionRepo) Delete(IDs []string) (int64, error) {
 	}
 
 	return deleteResult.DeletedCount, nil
+}
+
+func (r TransactionRepo) ExistsByCategoryIDs(categoryIDs []string) (bool, error) {
+	collection := r.Client.Database("bucketWise").Collection("transactions")
+
+	filter := bson.M{"category_id": bson.M{"$in": categoryIDs}}
+
+	count, err := collection.CountDocuments(context.Background(), filter)
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }

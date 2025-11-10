@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  dto.CategoriesDeleteRequest:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
   dto.CategoryCreateRequest:
     description: Category data required to create a new category
     properties:
@@ -45,9 +52,9 @@ definitions:
     properties:
       amount:
         type: number
-      categoryID:
+      category_id:
         type: string
-      categoryName:
+      category_name:
         type: string
       date:
         type: string
@@ -71,26 +78,48 @@ info:
   contact:
     name: Denis Amieva
     url: https://github.com/damieva/bucketWise
-  description: |-
-    ## Overview
-    The BucketWise API provides endpoints to manage financial categories and transactions.
-    It allows users to create, list, update, and delete categories, helping organize spending into personalized budgets.
-
-    ## Features
-    - Create, read, update, and delete categories
-    - Categorize and manage transactions
-    - RESTful interface using JSON
-
-    ## Contact
-    **Author:** Denis Amieva
-    **Repository:** [github.com/damieva/bucketWise](https://github.com/damieva/bucketWise)
+  description: The BucketWise API provides endpoints to manage financial categories
+    and transactions.
   license:
     name: MIT
-  termsOfService: http://swagger.io/terms/
   title: BucketWise API
   version: "1.0"
 paths:
   /categories:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes one or more categories by their IDs
+      parameters:
+      - description: Array of category IDs to delete
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CategoriesDeleteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Deletion result
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete multiple categories
+      tags:
+      - categories
     get:
       description: Retrieves all categories, or only one if the `name` query parameter
         is provided.
@@ -157,31 +186,6 @@ paths:
       tags:
       - categories
   /categories/{name}:
-    delete:
-      description: Deletes a specific category by its name
-      parameters:
-      - description: Category name
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Deletion result
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Internal server error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Delete a category
-      tags:
-      - categories
     put:
       consumes:
       - application/json

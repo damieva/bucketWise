@@ -33,8 +33,8 @@ func (s CategoryService) List(name string) ([]domain.Category, error) {
 	return categoryList, nil
 }
 
-func (s CategoryService) Delete(cat domain.Category) (int64, error) {
-	deletedCount, err := s.Repo.Delete(cat)
+func (s CategoryService) Delete(IDs []string) (int64, error) {
+	deletedCount, err := s.Repo.Delete(IDs)
 	if err != nil {
 		log.Println(err.Error())
 		return deletedCount, fmt.Errorf("error deleting category %w", err)

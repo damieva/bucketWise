@@ -10,6 +10,6 @@ const (
 type ClassificationRule struct {
 	ID         string   `json:"id"`
 	Keyword    string   `json:"keyword"`
-	CategoryID string   `json:"categoryID"`
+	CategoryID string   `json:"category_id"`
 	Rule       RuleType `json:"rule"`
 }

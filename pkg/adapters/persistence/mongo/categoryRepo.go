@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -59,13 +60,27 @@ func (r CategoryRepo) Select(name string) ([]domain.Category, error) {
 	return categories, nil
 }
 
-func (r CategoryRepo) Delete(cat domain.Category) (int64, error) {
+func (r CategoryRepo) Delete(IDs []string) (int64, error) {
 	collection := r.Client.Database("bucketWise").Collection("categories")
-	filter := bson.M{"name": cat.Name}
-	res, err := collection.DeleteOne(context.Background(), filter)
+
+	// Convertir los IDs de tipo string a ObjectID
+	objectIDs := make([]primitive.ObjectID, 0, len(IDs))
+	for _, idStr := range IDs {
+		objID, err := primitive.ObjectIDFromHex(idStr)
+		if err != nil {
+			log.Printf("invalid ObjectID: %s, error: %+v\n", idStr, err)
+			return 0, fmt.Errorf("invalid ObjectID: %s", idStr)
+		}
+		objectIDs = append(objectIDs, objID)
+	}
+
+	// Crear el filtro para eliminar todas las categorías con esos _id
+	filter := bson.M{"_id": bson.M{"$in": objectIDs}}
+
+	res, err := collection.DeleteMany(context.Background(), filter)
 	if err != nil {
-		log.Printf("error deleting category %s: %+v\n", cat.Name, err)
-		return res.DeletedCount, domain.ErrUnexpectedDatabase
+		log.Printf("error deleting categories %v: %+v\n", IDs, err)
+		return 0, domain.ErrUnexpectedDatabase
 	}
 
 	return res.DeletedCount, nil
