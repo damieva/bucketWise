@@ -44,26 +44,46 @@ func (r TransactionRepo) Select(cat string) ([]domain.Transaction, error) {
 	return transactions, nil
 }
 
-func (r TransactionRepo) Insert(tx domain.Transaction) (interface{}, error) {
-	// Inicializamos un handler para trabajar con la collection transactions
+func (r TransactionRepo) Insert(tx domain.Transaction) (domain.ID, error) {
 	collection := r.Client.Database("bucketWise").Collection("transactions")
-	// Insertamos un documento en la collection. El contexto (como bien inicializamos arriba) indica el tiempo y cancelación de la operación.
-	// El insertResult nos devolverá el ID que Mongo asignará al documento
-	insertResult, err := collection.InsertOne(context.Background(), tx)
+
+	// Convertir CategoryID string → ObjectID
+	categoryOID, err := primitive.ObjectIDFromHex(string(tx.CategoryID))
 	if err != nil {
-		log.Println(err.Error())
-		return nil, fmt.Errorf("error inserting transaction %w", err)
+		return "", fmt.Errorf("invalid CategoryID '%s': %w", tx.CategoryID, err)
 	}
 
-	return insertResult.InsertedID, nil
+	// Documento real que se guarda en Mongo (mapper infra → mongo)
+	mongoTx := bson.M{
+		"category_id":   categoryOID,
+		"category_name": tx.CategoryName,
+		"type":          tx.Type,
+		"amount":        tx.Amount,
+		"date":          tx.Date,
+		"description":   tx.Description,
+	}
+
+	insertResult, err := collection.InsertOne(context.Background(), mongoTx)
+	if err != nil {
+		log.Println(err.Error())
+		return "", fmt.Errorf("error inserting transaction: %w", err)
+	}
+
+	// Extraer ID generado por Mongo
+	oid, ok := insertResult.InsertedID.(primitive.ObjectID)
+	if !ok {
+		return "", fmt.Errorf("expected ObjectID but got %T", insertResult.InsertedID)
+	}
+
+	return domain.ID(oid.Hex()), nil
 }
 
-func (r TransactionRepo) Delete(IDs []string) (int64, error) {
+func (r TransactionRepo) Delete(IDs []domain.ID) (int64, error) {
 	collection := r.Client.Database("bucketWise").Collection("transactions")
 
 	objectIDs := make([]primitive.ObjectID, 0, len(IDs))
 	for _, id := range IDs {
-		objID, err := primitive.ObjectIDFromHex(id)
+		objID, err := primitive.ObjectIDFromHex(string(id))
 		if err != nil {
 			return 0, fmt.Errorf("invalid transaction ID: %s", id)
 		}
@@ -80,10 +100,19 @@ func (r TransactionRepo) Delete(IDs []string) (int64, error) {
 	return deleteResult.DeletedCount, nil
 }
 
-func (r TransactionRepo) ExistsByCategoryIDs(categoryIDs []string) (bool, error) {
+func (r TransactionRepo) ExistsByCategoryIDs(categoryIDs []domain.ID) (bool, error) {
 	collection := r.Client.Database("bucketWise").Collection("transactions")
 
-	filter := bson.M{"category_id": bson.M{"$in": categoryIDs}}
+	objectIDs := make([]primitive.ObjectID, 0, len(categoryIDs))
+	for _, id := range categoryIDs {
+		oid, err := primitive.ObjectIDFromHex(string(id))
+		if err != nil {
+			return false, fmt.Errorf("invalid ObjectID: %s", id)
+		}
+		objectIDs = append(objectIDs, oid)
+	}
+
+	filter := bson.M{"category_id": bson.M{"$in": objectIDs}}
 
 	count, err := collection.CountDocuments(context.Background(), filter)
 	if err != nil {

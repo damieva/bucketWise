@@ -3,9 +3,6 @@ package usecases
 import (
 	"bucketWise/pkg/domain"
 	"bucketWise/pkg/ports"
-	"fmt"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type TransactionUseCase struct {
@@ -17,7 +14,7 @@ func (uc TransactionUseCase) CreateTransactionUseCase(tx domain.Transaction) (do
 	newTx := tx
 
 	// Añadir/forzar los campos de categoría
-	newTx.CategoryID = "69123b72f8ea01cc75e9ecf6"
+	newTx.CategoryID = "691c3ac97db0505faae7015c"
 	newTx.CategoryName = "Fixed costs"
 	newTx.Type = domain.ExpenseCategory
 
@@ -27,14 +24,8 @@ func (uc TransactionUseCase) CreateTransactionUseCase(tx domain.Transaction) (do
 		return domain.Transaction{}, err
 	}
 
-	// Convertir el ID de MongoDB a string
-	objectID, ok := createdID.(primitive.ObjectID)
-	if !ok {
-		return domain.Transaction{}, fmt.Errorf("expected primitive.ObjectID but got %T", createdID)
-	}
-
-	// Asignar el ID a la entidad de dominio
-	newTx.ID = objectID.Hex()
+	// Asignar el ID devuelto por el servicio (ya es domain.ID)
+	newTx.ID = createdID
 
 	// Devolver la transacción con su nuevo ID
 	return newTx, nil
@@ -44,6 +35,6 @@ func (uc TransactionUseCase) ListTransactionsUseCase(cat string) ([]domain.Trans
 	return uc.TransactionService.List(cat)
 }
 
-func (uc TransactionUseCase) DeleteTransactionsUseCase(IDs []string) (int64, error) {
+func (uc TransactionUseCase) DeleteTransactionsUseCase(IDs []domain.ID) (int64, error) {
 	return uc.TransactionService.Delete(IDs)
 }

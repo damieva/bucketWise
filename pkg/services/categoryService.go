@@ -11,15 +11,14 @@ type CategoryService struct {
 	Repo ports.CategoryRepository
 }
 
-func (s CategoryService) Create(cat domain.Category) (interface{}, error) {
-
-	insertedId, err := s.Repo.Insert(cat)
+func (s CategoryService) Create(cat domain.Category) (domain.ID, error) {
+	insertedID, err := s.Repo.Insert(cat)
 	if err != nil {
 		log.Println(err.Error())
-		return nil, fmt.Errorf("error creating category %w", err)
+		return "", fmt.Errorf("error creating category: %w", err)
 	}
 
-	return insertedId, nil
+	return insertedID, nil
 }
 
 func (s CategoryService) List(name string) ([]domain.Category, error) {
@@ -33,7 +32,7 @@ func (s CategoryService) List(name string) ([]domain.Category, error) {
 	return categoryList, nil
 }
 
-func (s CategoryService) Delete(IDs []string) (int64, error) {
+func (s CategoryService) Delete(IDs []domain.ID) (int64, error) {
 	deletedCount, err := s.Repo.Delete(IDs)
 	if err != nil {
 		log.Println(err.Error())

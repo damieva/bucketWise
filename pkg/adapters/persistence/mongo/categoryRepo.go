@@ -15,18 +15,23 @@ type CategoryRepo struct {
 	Client *mongo.Client
 }
 
-func (r CategoryRepo) Insert(cat domain.Category) (interface{}, error) {
-	// Inicializamos un handler para trabajar con la collection categories
+func (r CategoryRepo) Insert(cat domain.Category) (domain.ID, error) {
 	collection := r.Client.Database("bucketWise").Collection("categories")
-	// Insertamos un documento en la collection. El contexto (como bien inicializamos arriba) indica el tiempo y cancelación de la operación.
-	// El insertResult nos devolverá el ID que Mongo asignará al documento
+
 	insertResult, err := collection.InsertOne(context.Background(), cat)
 	if err != nil {
-		log.Printf("error inserting category %w", err)
-		return nil, domain.ErrUnexpectedDatabase
+		log.Printf("error inserting category: %v", err)
+		return "", domain.ErrUnexpectedDatabase
 	}
 
-	return insertResult.InsertedID, nil
+	// Convertir el ID devuelto por Mongo a primitive.ObjectID
+	oid, ok := insertResult.InsertedID.(primitive.ObjectID)
+	if !ok {
+		return "", fmt.Errorf("expected ObjectID but got %T", insertResult.InsertedID)
+	}
+
+	// Conversion directa a domain.ID
+	return domain.ID(oid.Hex()), nil
 }
 
 func (r CategoryRepo) Select(name string) ([]domain.Category, error) {
@@ -60,16 +65,16 @@ func (r CategoryRepo) Select(name string) ([]domain.Category, error) {
 	return categories, nil
 }
 
-func (r CategoryRepo) Delete(IDs []string) (int64, error) {
+func (r CategoryRepo) Delete(IDs []domain.ID) (int64, error) {
 	collection := r.Client.Database("bucketWise").Collection("categories")
 
-	// Convertir los IDs de tipo string a ObjectID
+	// Convertir los IDs de domain.ID a ObjectID
 	objectIDs := make([]primitive.ObjectID, 0, len(IDs))
-	for _, idStr := range IDs {
-		objID, err := primitive.ObjectIDFromHex(idStr)
+	for _, id := range IDs {
+		objID, err := primitive.ObjectIDFromHex(string(id))
 		if err != nil {
-			log.Printf("invalid ObjectID: %s, error: %+v\n", idStr, err)
-			return 0, fmt.Errorf("invalid ObjectID: %s", idStr)
+			log.Printf("invalid ObjectID: %s, error: %+v\n", id, err)
+			return 0, fmt.Errorf("invalid ObjectID: %s", id)
 		}
 		objectIDs = append(objectIDs, objID)
 	}

@@ -8,7 +8,7 @@ const (
 )
 
 type Budget struct {
-	ID             string       `json:"id"`
+	ID             ID           `json:"id"`
 	AssignedAmount float64      `json:"assignedAmount"`
 	SpentAmount    float64      `json:"spentAmount"`
 	Period         BudgetPeriod `json:"period"`

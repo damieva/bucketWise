@@ -51,7 +51,7 @@ func main() {
 	// ---------- UseCases ----------
 	categoryUC := usecases.CategoryUseCase{
 		CategoryService:    categorySrv,
-		TransactionService: transactionSrv, // ✅ INYECTADO AQUÍ
+		TransactionService: transactionSrv,
 	}
 	transactionUC := usecases.TransactionUseCase{
 		TransactionService: transactionSrv,

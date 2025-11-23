@@ -8,7 +8,7 @@ const (
 )
 
 type Category struct {
-	ID   string       `bson:"_id,omitempty"`
+	ID   ID           `bson:"_id,omitempty"`
 	Name string       `bson:"name"`
 	Type CategoryType `bson:"type"` // income | expense
 }

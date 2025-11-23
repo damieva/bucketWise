@@ -4,6 +4,7 @@ import (
 	"bucketWise/pkg/domain"
 	"bucketWise/pkg/dto"
 	"bucketWise/pkg/ports"
+	"log"
 	"net/http"
 	"strings"
 
@@ -46,7 +47,7 @@ func (h TransactionHandler) CreateTransaction(c *gin.Context) {
 	}
 
 	resp := dto.TransactionResponse{
-		ID:           insertedTx.ID,
+		ID:           string(insertedTx.ID),
 		Date:         insertedTx.Date,
 		Amount:       insertedTx.Amount,
 		Description:  insertedTx.Description,
@@ -77,7 +78,7 @@ func (h TransactionHandler) ListTransactions(c *gin.Context) {
 	var response []dto.TransactionResponse
 	for _, tx := range transactionList {
 		response = append(response, dto.TransactionResponse{
-			ID:           tx.ID,
+			ID:           string(tx.ID),
 			Amount:       tx.Amount,
 			Description:  tx.Description,
 			Date:         tx.Date,
@@ -104,19 +105,37 @@ func (h TransactionHandler) ListTransactions(c *gin.Context) {
 func (h TransactionHandler) DeleteTransactions(c *gin.Context) {
 	var req dto.TransactionsDeleteRequest
 
+	// Validar cuerpo JSON
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
+	// Validar que haya al menos un ID
 	if len(req.IDs) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "no IDs provided"})
 		return
 	}
 
-	deletedCount, err := h.TransactionUC.DeleteTransactionsUseCase(req.IDs)
+	// Convertir []string a []domain.ID
+	ids := make([]domain.ID, len(req.IDs))
+	for i, id := range req.IDs {
+		ids[i] = domain.ID(id)
+	}
+
+	log.Printf("IDs recibidos para borrar transacciones: %+v\n", ids)
+
+	// Ejecutar caso de uso
+	deletedCount, err := h.TransactionUC.DeleteTransactionsUseCase(ids)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if deletedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "No transactions found for the provided IDs",
+		})
 		return
 	}
 

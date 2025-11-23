@@ -8,7 +8,7 @@ const (
 )
 
 type ClassificationRule struct {
-	ID         string   `json:"id"`
+	ID         ID       `json:"id"`
 	Keyword    string   `json:"keyword"`
 	CategoryID string   `json:"category_id"`
 	Rule       RuleType `json:"rule"`

@@ -50,7 +50,7 @@ func (h CategoryHandler) CreateCategory(c *gin.Context) {
 	}
 
 	resp := dto.CategoryResponse{
-		ID:   insertedCat.ID,
+		ID:   string(insertedCat.ID),
 		Name: insertedCat.Name,
 		Type: string(insertedCat.Type),
 	}
@@ -78,7 +78,7 @@ func (h CategoryHandler) ListCategories(c *gin.Context) {
 	var response []dto.CategoryResponse
 	for _, cat := range categoryList {
 		response = append(response, dto.CategoryResponse{
-			ID:   cat.ID,
+			ID:   string(cat.ID),
 			Name: cat.Name,
 			Type: string(cat.Type),
 		})
@@ -113,10 +113,44 @@ func (h CategoryHandler) DeleteCategories(c *gin.Context) {
 		return
 	}
 
+	// Convertir []string a []domain.ID
+	ids := make([]domain.ID, len(req.IDs))
+	for i, id := range req.IDs {
+		ids[i] = domain.ID(id)
+	}
+
 	// Ejecutar caso de uso
-	deletedCount, err := h.CategoryUC.DeleteCategoryUseCase(req.IDs)
+	deletedCount, err := h.CategoryUC.DeleteCategoryUseCase(ids)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+
+		// ID inválido
+		if errors.Is(err, domain.ErrInvalidCategoryID) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Categoría no encontrada
+		if errors.Is(err, domain.ErrCategoryNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Categoría con transacciones asociadas
+		if errors.Is(err, domain.ErrCategoryHasTransactions) {
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Cualquier otro error → 500
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+
+	// Si no se borró nada (pero no hubo error → IDs válidos pero no existen)
+	if deletedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "No categories found for the provided IDs",
+		})
 		return
 	}
 
