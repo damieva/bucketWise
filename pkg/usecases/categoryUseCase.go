@@ -5,8 +5,6 @@ import (
 	"bucketWise/pkg/ports"
 	"errors"
 	"fmt"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type CategoryUseCase struct {
@@ -32,14 +30,8 @@ func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (domain.Cat
 		// Crear una nueva categoría basada en la recibida
 		newCat := cat
 
-		// Convertir el ID de MongoDB a string
-		objectID, ok := createdID.(primitive.ObjectID)
-		if !ok {
-			return domain.Category{}, fmt.Errorf("expected primitive.ObjectID but got %T", createdID)
-		}
-
-		// Asignar el ID a la entidad de dominio
-		newCat.ID = objectID.Hex()
+		// Asignar el ID devuelto por el servicio (ya es domain.ID)
+		newCat.ID = createdID
 
 		// Devolver la categoría con su nuevo ID
 		return newCat, nil
@@ -53,7 +45,7 @@ func (uc CategoryUseCase) ListCategoriesUseCase(name string) ([]domain.Category,
 	return uc.CategoryService.List(name)
 }
 
-func (uc CategoryUseCase) DeleteCategoryUseCase(IDs []string) (int64, error) {
+func (uc CategoryUseCase) DeleteCategoryUseCase(IDs []domain.ID) (int64, error) {
 	// Primero, verificar si alguna de las categorías tiene transacciones asociadas
 	hasTx, err := uc.TransactionService.ExistsByCategoryIDs(IDs)
 	if err != nil {

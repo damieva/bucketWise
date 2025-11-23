@@ -11,15 +11,14 @@ type TransactionService struct {
 	Repo ports.TransactionRepository
 }
 
-func (s TransactionService) Create(tx domain.Transaction) (interface{}, error) {
-
-	insertedId, err := s.Repo.Insert(tx)
+func (s TransactionService) Create(tx domain.Transaction) (domain.ID, error) {
+	insertedID, err := s.Repo.Insert(tx)
 	if err != nil {
 		log.Println(err.Error())
-		return nil, fmt.Errorf("error creating transaction %w", err)
+		return "", fmt.Errorf("error creating transaction: %w", err)
 	}
 
-	return insertedId, nil
+	return insertedID, nil
 }
 
 func (s TransactionService) List(cat string) ([]domain.Transaction, error) {
@@ -32,7 +31,7 @@ func (s TransactionService) List(cat string) ([]domain.Transaction, error) {
 	return transactionList, nil
 }
 
-func (s TransactionService) Delete(IDs []string) (int64, error) {
+func (s TransactionService) Delete(IDs []domain.ID) (int64, error) {
 	deletedCount, err := s.Repo.Delete(IDs)
 	if err != nil {
 		log.Println(err.Error())
@@ -42,6 +41,6 @@ func (s TransactionService) Delete(IDs []string) (int64, error) {
 	return deletedCount, nil
 }
 
-func (s TransactionService) ExistsByCategoryIDs(categoryIDs []string) (bool, error) {
+func (s TransactionService) ExistsByCategoryIDs(categoryIDs []domain.ID) (bool, error) {
 	return s.Repo.ExistsByCategoryIDs(categoryIDs)
 }
