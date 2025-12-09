@@ -25,8 +25,7 @@ func (r TransactionRepo) Select(cat string) ([]domain.Transaction, error) {
 	} else {
 		filter = bson.M{"category_name": cat}
 	}
-	log.Println(cat)
-	log.Println(filter)
+
 	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		log.Printf("error getting the requested transaction documents %v", err)
@@ -35,10 +34,9 @@ func (r TransactionRepo) Select(cat string) ([]domain.Transaction, error) {
 
 	var transactions []domain.Transaction
 	err = cursor.All(context.Background(), &transactions)
-	log.Println(transactions)
 	if err != nil {
 		log.Println(err.Error())
-		return nil, fmt.Errorf("error converting mongo documents from the cursor to a transactions array %w", err)
+		return nil, fmt.Errorf("%w: %v", domain.ErrEntityDecoding, err)
 	}
 
 	return transactions, nil
