@@ -53,8 +53,8 @@ func (r CategoryRepo) Select(name string) ([]domain.Category, error) {
 	var categories []domain.Category
 	err = cursor.All(context.Background(), &categories)
 	if err != nil {
-		log.Printf("error decoding mongo cursor: %v", err)
-		return nil, fmt.Errorf("error converting mongo documents to a category array: %w", err)
+		log.Println(err.Error())
+		return nil, fmt.Errorf("%w: %v", domain.ErrEntityDecoding, err)
 	}
 
 	// Si se buscaba una sola categoría y no existe, devolvemos un error semántico

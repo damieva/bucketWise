@@ -1,6 +1,8 @@
 package ports
 
-import "bucketWise/pkg/domain"
+import (
+	"bucketWise/pkg/domain"
+)
 
 type CategoryRepository interface {
 	Insert(cat domain.Category) (domain.ID, error)
