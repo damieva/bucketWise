@@ -73,3 +73,52 @@ The environment variables are handled in the `Makefile`, but you can override th
 | `make swagger` | Regenerates Swagger documentation |
 
 ---
+
+## 🧭 Frontend Setup (Next.js)
+
+### 1. Install nvm
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
+echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+### 2. Install Node LTS
+
+```bash
+nvm install --lts
+```
+
+### 3. Create Next.js project
+
+```bash
+cd frontend
+npx create-next-app@latest . --ts
+```
+
+Selected options:
+- ESLint: Yes
+- React Compiler: No
+- Tailwind CSS: Yes
+- `src/` directory: Yes
+- App Router: Yes
+- Custom import alias: No
+
+### 4. Environment variables
+
+Create `frontend/.env.local`:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:8001
+```
+
+### 5. Run frontend
+
+```bash
+npm run dev
+```
+
+Frontend: http://localhost:3000  
+Backend: http://localhost:8001
