@@ -75,7 +75,7 @@ func (h CategoryHandler) ListCategories(c *gin.Context) {
 		return
 	}
 
-	var response []dto.CategoryResponse
+	var response = make([]dto.CategoryResponse, 0)
 	for _, cat := range categoryList {
 		response = append(response, dto.CategoryResponse{
 			ID:   string(cat.ID),

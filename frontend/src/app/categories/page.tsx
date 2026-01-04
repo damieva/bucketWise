@@ -26,22 +26,22 @@ export default async function CategoriesPage() {
 
             {/* Categories card */}
             <Card className="bg-card text-card-foreground shadow-sm border border-border">
-            <CardHeader>
+                <CardHeader>
                     <CardTitle className="text-xl">Existing Categories</CardTitle>
                 </CardHeader>
 
                 <CardContent>
                     {categories.length === 0 ? (
-                        <p className="text-gray-500">No categories available.</p>
+                        <p className="text-muted-foreground">No categories available.</p>
                     ) : (
-                        <div className="divide-y border rounded-md bg-white">
+                        <div className="divide-y border border-border rounded-md bg-card">
                             {categories.map((cat) => (
                                 <div
                                     key={cat.id}
-                                    className="flex items-center justify-between p-4 hover:bg-gray-50 transition"
+                                    className="grid grid-cols-2 p-4 hover:bg-muted transition"
                                 >
-                                    <span className="font-medium text-gray-800">{cat.name}</span>
-                                    <span className="text-sm text-gray-600">{cat.type}</span>
+                                    <span className="font-medium">{cat.name}</span>
+                                    <span className="text-muted-foreground">{cat.type}</span>
                                 </div>
                             ))}
                         </div>
