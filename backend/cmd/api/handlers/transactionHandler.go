@@ -75,7 +75,7 @@ func (h TransactionHandler) ListTransactions(c *gin.Context) {
 		return
 	}
 
-	var response []dto.TransactionResponse
+	var response = make([]dto.TransactionResponse, 0)
 	for _, tx := range transactionList {
 		response = append(response, dto.TransactionResponse{
 			ID:           string(tx.ID),
