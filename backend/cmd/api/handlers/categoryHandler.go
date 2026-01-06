@@ -193,3 +193,5 @@ func (h CategoryHandler) UpdateCategory(c *gin.Context) {
 		"message": "Category updated successfully",
 	})
 }
+
+// run pipeline
