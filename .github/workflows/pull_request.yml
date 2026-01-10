@@ -1,0 +1,53 @@
+name: PR Checks
+
+on:
+    pull_request:
+        branches:
+            - main
+        paths:
+            - backend/**
+            - .github/workflows/pull_request.yml
+
+permissions:
+    contents: read
+
+jobs:
+    pull_request:
+        name: Backend CI + Security
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up Go
+              uses: actions/setup-go@v5
+              with:
+                  go-version: "1.22"
+                  cache: true
+
+            - name: Go vet
+              working-directory: backend
+              run: go vet ./...
+
+            - name: Go test
+              working-directory: backend
+              run: go test ./...
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Build image (no push)
+              uses: docker/build-push-action@v6
+              with:
+                  context: ./backend
+                  file: ./backend/Dockerfile
+                  load: true
+                  tags: bucketwise-backend:pr
+
+            - name: Trivy vulnerability scan
+              uses: aquasecurity/trivy-action@0.20.0
+              with:
+                  image-ref: bucketwise-backend:pr
+                  format: table
+                  severity: CRITICAL,HIGH
+                  exit-code: 1
