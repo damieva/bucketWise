@@ -89,3 +89,13 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootUsername: "admin"
+    rootPassword: "supersecret"
+  persistence:
+    enabled: true
+    size: "10Gi"
