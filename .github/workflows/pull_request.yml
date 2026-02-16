@@ -39,7 +39,7 @@ jobs:
                 version: v3.14.4
 
             - name: Helm lint (bucketwise-backend)
-              run: helm lint backend/deploy/bucketwise-backend
+              run: helm lint deploy/bucketwise-backend
 
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
