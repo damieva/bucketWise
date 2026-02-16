@@ -96,6 +96,7 @@ mongodb:
     enabled: true
     rootUsername: "admin"
     rootPassword: "supersecret"
+    database: "bucketWise"
   persistence:
     enabled: true
     size: "10Gi"

@@ -1,0 +1,31 @@
+{{- if (.Values.mongodb.enabled | default false) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "bucketwise-backend.fullname" . }}-mongo-init
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 5
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: mongo-init
+          image: mongo:7
+          command: ["/bin/bash", "/scripts/init.sh"]
+          env:
+            - name: MONGO_INITDB_DATABASE
+              value: {{ .Values.mongodb.auth.database | default "bucketWise" }}
+            - name: MONGO_URI
+              value: mongodb://{{ .Values.mongodb.auth.rootUsername }}:{{ .Values.mongodb.auth.rootPassword }}@{{ .Values.mongodb.fullnameOverride | default "mongodb" }}:27017/admin
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+      volumes:
+        - name: scripts
+          configMap:
+            name: {{ include "bucketwise-backend.fullname" . }}-mongo-init
+            defaultMode: 0755
+{{- end }}
