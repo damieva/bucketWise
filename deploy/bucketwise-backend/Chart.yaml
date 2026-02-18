@@ -8,5 +8,5 @@ appVersion: "1.0.0"
 dependencies:
   - name: mongodb
     version: "0.10.1"
-    repository: "oci://registry-1.docker.io/cloudpirates/mongodb"
+    repository: "oci://registry-1.docker.io/cloudpirates"
     condition: mongodb.enabled
