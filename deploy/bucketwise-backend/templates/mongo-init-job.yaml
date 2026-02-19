@@ -4,8 +4,7 @@ kind: Job
 metadata:
   name: {{ include "bucketwise-backend.fullname" . }}-mongo-init
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    argocd.argoproj.io/hook: PostSync
 spec:
   backoffLimit: 5
   template:
