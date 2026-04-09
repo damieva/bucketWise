@@ -63,7 +63,7 @@ jobs:
           tags: bucketwise-backend:pr
 
       - name: Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@0.20.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: bucketwise-backend:pr
           format: table
