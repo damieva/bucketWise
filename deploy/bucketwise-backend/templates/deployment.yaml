@@ -40,6 +40,11 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: MONGO_URI
+              value: "mongodb://{{ .Values.mongodb.auth.rootUsername }}:{{ .Values.mongodb.auth.rootPassword }}@{{ .Release.Name }}-mongodb:27017"
+            - name: MONGO_DATABASE
+              value: {{ .Values.mongoDatabase | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
