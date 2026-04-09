@@ -1,5 +1,5 @@
 # -------- Build stage --------
-FROM golang:1.24-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     go build -o bucketwise ./cmd/api
 
 # -------- Runtime stage --------
-FROM gcr.io/distroless/base-debian12
+FROM gcr.io/distroless/static-debian12
 
 WORKDIR /app
 COPY --from=builder /app/bucketwise /app/bucketwise
