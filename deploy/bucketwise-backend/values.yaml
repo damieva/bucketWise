@@ -90,6 +90,8 @@ tolerations: []
 
 affinity: {}
 
+mongoDatabase: "bucketWise"
+
 mongodb:
   enabled: true
   database: "bucketWise"
