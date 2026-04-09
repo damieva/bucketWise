@@ -16,7 +16,7 @@ spec:
           command: ["/bin/bash", "/scripts/init.sh"]
           env:
             - name: MONGO_INITDB_DATABASE
-              value: {{ .Values.mongoDatabase | quote }}
+              value: {{ .Values.mongodb.database | quote }}
             - name: MONGO_URI
               value: mongodb://{{ .Values.mongodb.auth.rootUsername }}:{{ .Values.mongodb.auth.rootPassword }}@{{ .Release.Name }}-mongodb:27017/admin
           volumeMounts:

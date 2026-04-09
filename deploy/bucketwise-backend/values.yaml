@@ -90,10 +90,9 @@ tolerations: []
 
 affinity: {}
 
-mongoDatabase: "bucketWise"
-
 mongodb:
   enabled: true
+  database: "bucketWise"
   auth:
     enabled: true
     rootUsername: "admin"
