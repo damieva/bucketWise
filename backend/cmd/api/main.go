@@ -22,7 +22,7 @@ import (
 // @contact.name Denis Amieva
 // @contact.url https://github.com/damieva/bucketWise
 // @license.name MIT
-// @host localhost:8001
+// @host localhost:8080
 // @BasePath /
 func main() {
 	// Load environment
@@ -85,5 +85,5 @@ func main() {
 	ginEngine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// ---------- Run ----------
-	log.Fatalln(ginEngine.Run(":8001"))
+	log.Fatalln(ginEngine.Run(":8080"))
 }
