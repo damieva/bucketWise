@@ -76,6 +76,11 @@ func main() {
 		TransactionsRouteGroup.DELETE("", transactionHandler.DeleteTransactions)
 	}
 
+	// ---------- Health ----------
+	ginEngine.GET("/health", func(c *gin.Context) {
+		c.Status(200)
+	})
+
 	// ---------- Swagger ----------
 	ginEngine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
