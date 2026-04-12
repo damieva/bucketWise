@@ -13,7 +13,7 @@ jobs:
     name: Detect changes
     runs-on: ubuntu-latest
     outputs:
-      backend: ${{ steps.filter.outputs.backend }}
+      app: ${{ steps.filter.outputs.app }}
       helm: ${{ steps.filter.outputs.helm }}
     steps:
       - uses: actions/checkout@v4
@@ -23,16 +23,20 @@ jobs:
         uses: dorny/paths-filter@v3
         with:
           filters: |
-            backend:
-              - 'backend/**'
+            app:
+              - 'cmd/**'
+              - 'pkg/**'
+              - 'go.mod'
+              - 'go.sum'
+              - 'Dockerfile'
             helm:
               - 'deploy/**'
 
-  backend-ci:
-    name: Backend CI + Security
+  ci:
+    name: CI + Security
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.backend == 'true'
+    if: needs.detect-changes.outputs.app == 'true'
 
     steps:
       - uses: actions/checkout@v4
@@ -44,11 +48,9 @@ jobs:
           cache: true
 
       - name: Go vet
-        working-directory: backend
         run: go vet ./...
 
       - name: Go test
-        working-directory: backend
         run: go test ./...
 
       - name: Set up Docker Buildx
@@ -57,15 +59,15 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v6
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: .
+          file: ./Dockerfile
           load: true
-          tags: bucketwise-backend:pr
+          tags: bucketwise:pr
 
       - name: Trivy vulnerability scan
         uses: aquasecurity/trivy-action@0.35.0
         with:
-          image-ref: bucketwise-backend:pr
+          image-ref: bucketwise:pr
           format: table
           severity: CRITICAL,HIGH
           exit-code: 1
