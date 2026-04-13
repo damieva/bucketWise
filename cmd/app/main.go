@@ -1,14 +1,14 @@
 package main
 
 import (
-	"bucketWise/cmd/api/handlers"
-	"bucketWise/pkg/adapters/persistence/mongo"
+	handlers "bucketWise/pkg/adapters/input/http"
+	"bucketWise/pkg/adapters/output/persistence/mongo"
 	"bucketWise/pkg/services"
 	"bucketWise/pkg/usecases"
 	"log"
 	"os"
 
-	_ "bucketWise/cmd/api/docs"
+	_ "bucketWise/cmd/app/docs"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"

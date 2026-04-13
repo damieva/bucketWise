@@ -1,12 +1,16 @@
-name: Build & Push Docker Images
+name: Build & Push Docker Image
 
 on:
   push:
     branches:
       - main
     paths:
-      - backend/**
-      - .github/workflows/docker.yml
+      - cmd/**
+      - pkg/**
+      - go.mod
+      - go.sum
+      - Dockerfile
+      - .github/workflows/push.yml
   workflow_dispatch: # Permite lanzar el workflow manual desde la UI de GitHub
 
 permissions:
@@ -18,7 +22,7 @@ jobs:
     name: Detect changes
     runs-on: ubuntu-latest
     outputs:
-      backend: ${{ steps.filter.outputs.backend }}
+      app: ${{ steps.filter.outputs.app }}
     steps:
       - uses: actions/checkout@v4
 
@@ -27,14 +31,18 @@ jobs:
         uses: dorny/paths-filter@v3
         with:
           filters: |
-            backend:
-              - backend/**
+            app:
+              - 'cmd/**'
+              - 'pkg/**'
+              - 'go.mod'
+              - 'go.sum'
+              - 'Dockerfile'
 
-  backend:
-    name: Build & Push Backend
+  build-and-push:
+    name: Build & Push
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.backend == 'true'
+    if: needs.detect-changes.outputs.app == 'true'
 
     steps:
       - uses: actions/checkout@v4
@@ -50,14 +58,14 @@ jobs:
       - uses: docker/metadata-action@v5
         id: meta
         with:
-          images: ghcr.io/${{ github.repository }}-backend
+          images: ghcr.io/${{ github.repository }}
           tags: |
             type=sha
             type=raw,value=latest
 
       - uses: docker/build-push-action@v6
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: .
+          file: ./Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}

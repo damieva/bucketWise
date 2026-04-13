@@ -1,0 +1,14 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    name: Denis Amieva
+    url: https://github.com/damieva/bucketWise
+  description: The BucketWise API provides endpoints to manage financial categories
+    and transactions.
+  license:
+    name: MIT
+  title: BucketWise API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

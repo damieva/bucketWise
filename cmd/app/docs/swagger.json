@@ -1,0 +1,18 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "The BucketWise API provides endpoints to manage financial categories and transactions.",
+        "title": "BucketWise API",
+        "contact": {
+            "name": "Denis Amieva",
+            "url": "https://github.com/damieva/bucketWise"
+        },
+        "license": {
+            "name": "MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {}
+}

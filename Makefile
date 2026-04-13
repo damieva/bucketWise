@@ -1,3 +1,6 @@
+IMAGE ?= bucketwise
+TAG   ?= latest
+
 MONGO_CONTAINER_NAME := local-mongodb
 MONGO_PORT := 27017
 MONGO_VOLUME := mongo_data
@@ -6,13 +9,13 @@ MONGO_DATABASE := bucketWise
 .PHONY: swagger run start-up-local-env stop-local-env clean-local-env
 
 swagger:
-	cd cmd/api && swag init \
+	cd cmd/app && swag init \
 		-g main.go \
 		-d .,../../pkg/dto \
 		-o ./docs
 
 run: swagger
-	 go run cmd/api/main.go
+	 go run cmd/app/main.go
 
 start-up-local-env:
 	@echo "🚀 Iniciando entorno local con MongoDB y colecciones iniciales..."
