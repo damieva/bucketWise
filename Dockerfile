@@ -16,6 +16,7 @@ FROM gcr.io/distroless/static-debian12
 
 WORKDIR /app
 COPY --from=builder /app/bucketwise /app/bucketwise
+COPY --from=builder /app/web /app/web
 
 USER nonroot:nonroot
 
