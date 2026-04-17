@@ -1,7 +1,8 @@
 package main
 
 import (
-	handlers "bucketWise/pkg/adapters/input/http"
+	"bucketWise/pkg/adapters/input/http/api"
+	"bucketWise/pkg/adapters/input/http/web"
 	"bucketWise/pkg/adapters/output/persistence/mongo"
 	"bucketWise/pkg/services"
 	"bucketWise/pkg/usecases"
@@ -32,6 +33,8 @@ func main() {
 
 	// Initialize Gin
 	ginEngine := gin.Default()
+	ginEngine.HTMLRender = web.NewRenderer()
+	ginEngine.Static("/static", "./web/static")
 
 	// Connect MongoDB
 	client, err := mongo.ConnectClient(os.Getenv("MONGO_URI"))
@@ -57,23 +60,31 @@ func main() {
 	}
 
 	// ---------- Handlers ----------
-	categoryHandler := handlers.CategoryHandler{CategoryUC: categoryUC}
-	transactionHandler := handlers.TransactionHandler{TransactionUC: transactionUC}
+	categoryHandler := api.CategoryHandler{CategoryUC: categoryUC}
+	transactionHandler := api.TransactionHandler{TransactionUC: transactionUC}
+	categoryWebHandler := web.CategoryWebHandler{CategoryUC: categoryUC}
 
-	// ---------- Routes ----------
-	CategoriesRouteGroup := ginEngine.Group("/categories")
+	// ---------- API Routes (/api) ----------
+	apiGroup := ginEngine.Group("/api")
 	{
-		CategoriesRouteGroup.POST("", categoryHandler.CreateCategory)
-		CategoriesRouteGroup.GET("", categoryHandler.ListCategories)
-		CategoriesRouteGroup.PUT("/:name", categoryHandler.UpdateCategory)
-		CategoriesRouteGroup.DELETE("/", categoryHandler.DeleteCategories)
+		categoriesAPI := apiGroup.Group("/categories")
+		categoriesAPI.POST("", categoryHandler.CreateCategory)
+		categoriesAPI.GET("", categoryHandler.ListCategories)
+		categoriesAPI.PUT("/:name", categoryHandler.UpdateCategory)
+		categoriesAPI.DELETE("", categoryHandler.DeleteCategories)
+
+		transactionsAPI := apiGroup.Group("/transactions")
+		transactionsAPI.POST("", transactionHandler.CreateTransaction)
+		transactionsAPI.GET("", transactionHandler.ListTransactions)
+		transactionsAPI.DELETE("", transactionHandler.DeleteTransactions)
 	}
 
-	TransactionsRouteGroup := ginEngine.Group("/transactions")
+	// ---------- Web Routes ----------
+	categoriesWeb := ginEngine.Group("/categories")
 	{
-		TransactionsRouteGroup.POST("", transactionHandler.CreateTransaction)
-		TransactionsRouteGroup.GET("", transactionHandler.ListTransactions)
-		TransactionsRouteGroup.DELETE("", transactionHandler.DeleteTransactions)
+		categoriesWeb.GET("", categoryWebHandler.Index)
+		categoriesWeb.POST("", categoryWebHandler.Create)
+		categoriesWeb.DELETE("/:id", categoryWebHandler.Delete)
 	}
 
 	// ---------- Health ----------
@@ -85,5 +96,9 @@ func main() {
 	ginEngine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// ---------- Run ----------
-	log.Fatalln(ginEngine.Run(":8080"))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Fatalln(ginEngine.Run(":" + port))
 }

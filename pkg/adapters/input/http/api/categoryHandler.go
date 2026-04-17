@@ -1,4 +1,4 @@
-package handlers
+package api
 
 import (
 	"bucketWise/pkg/domain"
@@ -101,52 +101,39 @@ func (h CategoryHandler) ListCategories(c *gin.Context) {
 func (h CategoryHandler) DeleteCategories(c *gin.Context) {
 	var req dto.CategoriesDeleteRequest
 
-	// Validar cuerpo JSON
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
-	// Validar que haya al menos un ID
 	if len(req.IDs) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "no IDs provided"})
 		return
 	}
 
-	// Convertir []string a []domain.ID
 	ids := make([]domain.ID, len(req.IDs))
 	for i, id := range req.IDs {
 		ids[i] = domain.ID(id)
 	}
 
-	// Ejecutar caso de uso
 	deletedCount, err := h.CategoryUC.DeleteCategoryUseCase(ids)
 	if err != nil {
-
-		// ID inválido
 		if errors.Is(err, domain.ErrInvalidCategoryID) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-
-		// Categoría no encontrada
 		if errors.Is(err, domain.ErrCategoryNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
-
-		// Categoría con transacciones asociadas
 		if errors.Is(err, domain.ErrCategoryHasTransactions) {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
 		}
-
-		// Cualquier otro error → 500
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
-	// Si no se borró nada (pero no hubo error → IDs válidos pero no existen)
 	if deletedCount == 0 {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "No categories found for the provided IDs",
@@ -154,7 +141,6 @@ func (h CategoryHandler) DeleteCategories(c *gin.Context) {
 		return
 	}
 
-	// Respuesta exitosa
 	c.JSON(http.StatusOK, gin.H{
 		"data":    map[string]int64{"deletedCount": deletedCount},
 		"message": "Categories deleted successfully",

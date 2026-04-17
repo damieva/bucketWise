@@ -1,4 +1,4 @@
-package handlers
+package api
 
 import (
 	"bucketWise/pkg/domain"
@@ -105,19 +105,16 @@ func (h TransactionHandler) ListTransactions(c *gin.Context) {
 func (h TransactionHandler) DeleteTransactions(c *gin.Context) {
 	var req dto.TransactionsDeleteRequest
 
-	// Validar cuerpo JSON
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
-	// Validar que haya al menos un ID
 	if len(req.IDs) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "no IDs provided"})
 		return
 	}
 
-	// Convertir []string a []domain.ID
 	ids := make([]domain.ID, len(req.IDs))
 	for i, id := range req.IDs {
 		ids[i] = domain.ID(id)
@@ -125,7 +122,6 @@ func (h TransactionHandler) DeleteTransactions(c *gin.Context) {
 
 	log.Printf("IDs recibidos para borrar transacciones: %+v\n", ids)
 
-	// Ejecutar caso de uso
 	deletedCount, err := h.TransactionUC.DeleteTransactionsUseCase(ids)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
