@@ -2,9 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "bucketwise-backend.fullname" . }}
+  name: {{ include "bucketwise.fullname" . }}
   labels:
-    {{- include "bucketwise-backend.labels" . | nindent 4 }}
+    {{- include "bucketwise.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -35,7 +35,7 @@ spec:
             {{- end }}
             backend:
               service:
-                name: {{ include "bucketwise-backend.fullname" $ }}
+                name: {{ include "bucketwise.fullname" $ }}
                 port:
                   number: {{ $.Values.service.port }}
           {{- end }}

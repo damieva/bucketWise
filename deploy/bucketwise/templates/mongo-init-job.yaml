@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "bucketwise-backend.fullname" . }}-mongo-init
+  name: {{ include "bucketwise.fullname" . }}-mongo-init
   annotations:
     argocd.argoproj.io/hook: PostSync
 spec:
@@ -25,6 +25,6 @@ spec:
       volumes:
         - name: scripts
           configMap:
-            name: {{ include "bucketwise-backend.fullname" . }}-mongo-init
+            name: {{ include "bucketwise.fullname" . }}-mongo-init
             defaultMode: 0755
 {{- end }}

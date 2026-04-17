@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "bucketwise-backend.fullname" . }}-mongo-init
+  name: {{ include "bucketwise.fullname" . }}-mongo-init
 data:
   init.sh: |
     #!/bin/bash

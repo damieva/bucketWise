@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "bucketwise-backend.name" -}}
+{{- define "bucketwise.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "bucketwise-backend.fullname" -}}
+{{- define "bucketwise.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "bucketwise-backend.chart" -}}
+{{- define "bucketwise.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "bucketwise-backend.labels" -}}
-helm.sh/chart: {{ include "bucketwise-backend.chart" . }}
-{{ include "bucketwise-backend.selectorLabels" . }}
+{{- define "bucketwise.labels" -}}
+helm.sh/chart: {{ include "bucketwise.chart" . }}
+{{ include "bucketwise.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "bucketwise-backend.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "bucketwise-backend.name" . }}
+{{- define "bucketwise.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "bucketwise.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "bucketwise-backend.serviceAccountName" -}}
+{{- define "bucketwise.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "bucketwise-backend.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "bucketwise.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
