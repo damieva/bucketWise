@@ -89,7 +89,7 @@ jobs:
           version: v3.14.4
 
       - name: Helm lint
-        run: helm lint deploy/bucketwise-backend
+        run: helm lint deploy/bucketwise
 
   all-checks:
     name: All checks passed
