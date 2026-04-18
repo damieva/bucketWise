@@ -4,7 +4,6 @@ import (
 	"bucketWise/pkg/adapters/input/http/api"
 	"bucketWise/pkg/adapters/input/http/web"
 	"bucketWise/pkg/adapters/output/persistence/mongo"
-	"bucketWise/pkg/services"
 	"bucketWise/pkg/usecases"
 	"log"
 	"os"
@@ -46,17 +45,13 @@ func main() {
 	categoryRepo := mongo.CategoryRepo{Client: client}
 	transactionRepo := mongo.TransactionRepo{Client: client}
 
-	// ---------- Services ----------
-	categorySrv := services.CategoryService{Repo: categoryRepo}
-	transactionSrv := services.TransactionService{Repo: transactionRepo}
-
 	// ---------- UseCases ----------
 	categoryUC := usecases.CategoryUseCase{
-		CategoryService:    categorySrv,
-		TransactionService: transactionSrv,
+		CategoryRepo:    categoryRepo,
+		TransactionRepo: transactionRepo,
 	}
 	transactionUC := usecases.TransactionUseCase{
-		TransactionService: transactionSrv,
+		TransactionRepo: transactionRepo,
 	}
 
 	// ---------- Handlers ----------
