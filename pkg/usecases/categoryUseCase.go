@@ -5,16 +5,17 @@ import (
 	"bucketWise/pkg/ports"
 	"errors"
 	"fmt"
+	"log"
 )
 
 type CategoryUseCase struct {
-	CategoryService    ports.CategoryService
-	TransactionService ports.TransactionService
+	CategoryRepo    ports.CategoryRepository
+	TransactionRepo ports.TransactionRepository
 }
 
 func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (domain.Category, error) {
 	// Comprobar si la categoría ya existe
-	_, err := uc.CategoryService.List(cat.Name)
+	_, err := uc.CategoryRepo.Select(cat.Name)
 	if err == nil {
 		// Si no hay error, la categoría ya existe
 		return domain.Category{}, domain.ErrCategoryAlreadyExists
@@ -22,7 +23,7 @@ func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (domain.Cat
 
 	// Si no se encuentra la categoría, crearla
 	if errors.Is(err, domain.ErrCategoryNotFound) {
-		createdID, err := uc.CategoryService.Create(cat)
+		createdID, err := uc.CategoryRepo.Insert(cat)
 		if err != nil {
 			return domain.Category{}, err
 		}
@@ -30,7 +31,7 @@ func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (domain.Cat
 		// Crear una nueva categoría basada en la recibida
 		newCat := cat
 
-		// Asignar el ID devuelto por el servicio (ya es domain.ID)
+		// Asignar el ID devuelto por el repo (ya es domain.ID)
 		newCat.ID = createdID
 
 		// Devolver la categoría con su nuevo ID
@@ -42,12 +43,19 @@ func (uc CategoryUseCase) CreateCategoryUseCase(cat domain.Category) (domain.Cat
 }
 
 func (uc CategoryUseCase) ListCategoriesUseCase(name string) ([]domain.Category, error) {
-	return uc.CategoryService.List(name)
+
+	categoryList, err := uc.CategoryRepo.Select(name)
+	if err != nil {
+		log.Println(err.Error())
+		return nil, fmt.Errorf("error listing all the categories %w", err)
+	}
+
+	return categoryList, nil
 }
 
 func (uc CategoryUseCase) DeleteCategoryUseCase(IDs []domain.ID) (int64, error) {
 	// Primero, verificar si alguna de las categorías tiene transacciones asociadas
-	hasTx, err := uc.TransactionService.ExistsByCategoryIDs(IDs)
+	hasTx, err := uc.TransactionRepo.ExistsByCategoryIDs(IDs)
 	if err != nil {
 		return 0, fmt.Errorf("error checking transactions for categories: %w", err)
 	}
@@ -57,7 +65,7 @@ func (uc CategoryUseCase) DeleteCategoryUseCase(IDs []domain.ID) (int64, error) 
 	}
 
 	// Si no hay transacciones, proceder a eliminar las categorías
-	deletedCount, err := uc.CategoryService.Delete(IDs)
+	deletedCount, err := uc.CategoryRepo.Delete(IDs)
 	if err != nil {
 		return 0, err
 	}
@@ -67,7 +75,7 @@ func (uc CategoryUseCase) DeleteCategoryUseCase(IDs []domain.ID) (int64, error) 
 
 func (uc CategoryUseCase) UpdateCategoryUseCase(catName string, cat domain.Category) (int64, error) {
 	// Verify that the category to update actually exists in the database
-	_, err := uc.CategoryService.List(catName)
+	_, err := uc.CategoryRepo.Select(catName)
 	if errors.Is(err, domain.ErrCategoryNotFound) {
 		return 0, domain.ErrCategoryNotFound
 	} else if err != nil {
@@ -75,11 +83,11 @@ func (uc CategoryUseCase) UpdateCategoryUseCase(catName string, cat domain.Categ
 	}
 
 	// Ensure the new category data does not conflict with an existing record
-	_, err = uc.CategoryService.List(cat.Name)
+	_, err = uc.CategoryRepo.Select(cat.Name)
 	if err == nil {
 		return 0, domain.ErrCategoryAlreadyExists
 	} else if errors.Is(err, domain.ErrCategoryNotFound) {
-		return uc.CategoryService.Update(catName, cat)
+		return uc.CategoryRepo.Update(catName, cat)
 	}
 	return 0, err
 }

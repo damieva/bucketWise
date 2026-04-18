@@ -89,4 +89,16 @@ jobs:
           version: v3.14.4
 
       - name: Helm lint
-        run: helm lint deploy/bucketwise-backend
+        run: helm lint deploy/bucketwise
+
+  all-checks:
+    name: All checks passed
+    runs-on: ubuntu-latest
+    needs: [ci, helm-ci]
+    if: always()
+    steps:
+      - name: Check results
+        run: |
+          if [[ "${{ needs.ci.result }}" == "failure" || "${{ needs.helm-ci.result }}" == "failure" ]]; then
+            exit 1
+          fi
