@@ -10,3 +10,7 @@ dependencies:
     version: "0.12.3"
     repository: "oci://registry-1.docker.io/cloudpirates"
     condition: mongodb.enabled
+  - name: ollama
+    version: "1.54.0"
+    repository: "https://helm.otwld.com/"
+    condition: ollama.enabled

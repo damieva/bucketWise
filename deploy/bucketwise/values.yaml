@@ -101,4 +101,16 @@ mongodb:
     enabled: true
     size: "10Gi"
 
-
+ollama:
+  enabled: true
+  ollama:
+    models:
+      pull:
+        - llama3.2:3b
+  resources:
+    requests:
+      cpu: "1"
+      memory: "4Gi"
+    limits:
+      cpu: "4"
+      memory: "6Gi"
