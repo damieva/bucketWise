@@ -15,6 +15,11 @@ func NewRenderer() multitemplate.Renderer {
 		"web/templates/categories/index.html",
 	)
 
+	r.AddFromFiles("transactions/index",
+		base,
+		"web/templates/transactions/index.html",
+	)
+
 	// Fragments (HTMX partial responses — no layout)
 	r.AddFromFiles("categories/row",
 		"web/templates/categories/row.html",

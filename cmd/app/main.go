@@ -58,6 +58,7 @@ func main() {
 	categoryHandler := api.CategoryHandler{CategoryUC: categoryUC}
 	transactionHandler := api.TransactionHandler{TransactionUC: transactionUC}
 	categoryWebHandler := web.CategoryWebHandler{CategoryUC: categoryUC}
+	transactionWebHandler := web.TransactionWebHandler{TransactionUC: transactionUC}
 
 	// ---------- API Routes (/api) ----------
 	apiGroup := ginEngine.Group("/api")
@@ -81,6 +82,8 @@ func main() {
 		categoriesWeb.POST("", categoryWebHandler.Create)
 		categoriesWeb.DELETE("/:id", categoryWebHandler.Delete)
 	}
+
+	ginEngine.GET("/transactions", transactionWebHandler.Index)
 
 	// ---------- Health ----------
 	ginEngine.GET("/health", func(c *gin.Context) {
