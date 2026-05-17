@@ -108,6 +108,9 @@ ollama:
     models:
       pull:
         - llama3.2:3b
+  extraEnv:
+    - name: OLLAMA_INSECURE
+      value: "true"
   resources:
     requests:
       cpu: "1"
