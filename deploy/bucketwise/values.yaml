@@ -104,6 +104,7 @@ mongodb:
 ollama:
   enabled: true
   ollama:
+    insecure: true
     models:
       pull:
         - llama3.2:3b
